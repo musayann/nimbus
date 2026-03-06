@@ -1,13 +1,4 @@
-import type { CurrentWeather, ForecastDay, AirQuality } from './types'
-
-export const mockAirQuality: AirQuality = {
-  aqi: 42,
-  level: 'Good',
-  pm25: 8.2,
-  pm10: 18.5,
-  o3: 65.0,
-  no2: 12.4,
-}
+import type { CurrentWeather, ForecastDay } from './types'
 
 export const mockCurrentWeather: CurrentWeather = {
   city: 'Kigali',
@@ -30,7 +21,6 @@ export const mockCurrentWeather: CurrentWeather = {
   high: 25,
   low: 15,
   lastUpdated: 'Just now',
-  airQuality: null,
 }
 
 export const mockForecast: ForecastDay[] = [

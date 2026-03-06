@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { SearchBar } from './search-bar'
 import { CurrentWeatherCard } from './current-weather-card'
 import { ForecastCard } from './forecast-card'
 import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
+import { AirQualityCard } from './air-quality-card'
 import { mockCurrentWeather, mockForecast, cityDatabase } from './mock-data'
 import type { CurrentWeather, ForecastDay } from './types'
-import { fetchAirQuality } from '@/app/actions/air-quality'
 
 const cityWeatherOverrides: Record<string, Partial<CurrentWeather>> = {
   Huye: { temperature: 20, condition: 'cloudy', description: 'Cool and overcast', humidity: 75, dewPoint: 14, windSpeed: 10, precipitation: 0.3 },
@@ -28,12 +28,6 @@ export function WeatherApp() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
 
-  useEffect(() => {
-    fetchAirQuality(mockCurrentWeather.coordinates).then((aq) => {
-      setCurrent((prev) => ({ ...prev, airQuality: aq }))
-    })
-  }, [])
-
   const loadCity = useCallback((city: string, country: string) => {
     setIsLoading(true)
     const entry = cityDatabase.find((c) => c.city === city)
@@ -49,11 +43,7 @@ export function WeatherApp() {
       lastUpdated: 'Just now',
     })
     setForecast(mockForecast)
-
-    fetchAirQuality(coords).then((aq) => {
-      setCurrent((prev) => ({ ...prev, airQuality: aq }))
-      setIsLoading(false)
-    })
+    setIsLoading(false)
   }, [])
 
   const handleUseLocation = useCallback(() => {
@@ -63,11 +53,7 @@ export function WeatherApp() {
       () => {
         setCurrent({ ...mockCurrentWeather, lastUpdated: 'Just now' })
         setForecast(mockForecast)
-
-        fetchAirQuality(mockCurrentWeather.coordinates).then((aq) => {
-          setCurrent((prev) => ({ ...prev, airQuality: aq }))
-          setIsLocating(false)
-        })
+        setIsLocating(false)
       },
       () => {
         setIsLocating(false)
@@ -124,6 +110,7 @@ export function WeatherApp() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           <CurrentWeatherCard weather={current} isLoading={isLoading} />
           <HourlyForecast />
+          <AirQualityCard coordinates={current.coordinates} />
           <WeatherDetailsCard weather={current} isLoading={isLoading} />
           <ForecastCard forecast={forecast} isLoading={isLoading} />
 
