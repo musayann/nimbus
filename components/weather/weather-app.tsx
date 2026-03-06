@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { SearchBar } from './search-bar'
 import { CurrentWeatherCard } from './current-weather-card'
 import { ForecastCard } from './forecast-card'
@@ -8,41 +8,59 @@ import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
 import { mockCurrentWeather, mockForecast, cityDatabase } from './mock-data'
-import type { CurrentWeather, ForecastDay } from './types'
+import { fetchWeather } from '@/app/actions/weather'
+import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
 
-const cityWeatherOverrides: Record<string, Partial<CurrentWeather>> = {
-  Huye: { temperature: 20, condition: 'cloudy', description: 'Cool and overcast', humidity: 75, dewPoint: 14, windSpeed: 10, precipitation: 0.3 },
-  Musanze: { temperature: 18, condition: 'foggy', description: 'Misty mountain morning', humidity: 85, dewPoint: 15, windSpeed: 8, precipitation: 0 },
-  Rubavu: { temperature: 24, condition: 'partly-cloudy', description: 'Lakeside breeze', humidity: 70, dewPoint: 17, windSpeed: 14, precipitation: 0 },
-  Muhanga: { temperature: 21, condition: 'partly-cloudy', description: 'Mild and pleasant', humidity: 68, dewPoint: 14, windSpeed: 11, precipitation: 0 },
-  Rusizi: { temperature: 26, condition: 'sunny', description: 'Warm and clear', humidity: 65, dewPoint: 18, windSpeed: 9, precipitation: 0 },
-  Nyagatare: { temperature: 27, condition: 'sunny', description: 'Hot savanna sun', humidity: 50, dewPoint: 15, windSpeed: 12, precipitation: 0 },
-  Karongi: { temperature: 23, condition: 'partly-cloudy', description: 'Lake Kivu breeze', humidity: 72, dewPoint: 16, windSpeed: 10, precipitation: 0 },
-  Rwamagana: { temperature: 24, condition: 'sunny', description: 'Clear eastern skies', humidity: 60, dewPoint: 15, windSpeed: 13, precipitation: 0 },
-  Nyanza: { temperature: 21, condition: 'cloudy', description: 'Overcast highlands', humidity: 74, dewPoint: 15, windSpeed: 9, precipitation: 0.1 },
+function haversineDistance(
+  a: { lat: number; lon: number },
+  b: { lat: number; lon: number },
+): number {
+  const R = 6371
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180
+  const dLon = ((b.lon - a.lon) * Math.PI) / 180
+  const sinLat = Math.sin(dLat / 2)
+  const sinLon = Math.sin(dLon / 2)
+  const h =
+    sinLat * sinLat +
+    Math.cos((a.lat * Math.PI) / 180) *
+      Math.cos((b.lat * Math.PI) / 180) *
+      sinLon *
+      sinLon
+  return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
 }
 
 export function WeatherApp() {
   const [current, setCurrent] = useState<CurrentWeather>(mockCurrentWeather)
   const [forecast, setForecast] = useState<ForecastDay[]>(mockForecast)
+  const [hourly, setHourly] = useState<HourlyItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
 
-  const loadCity = useCallback((city: string, country: string) => {
+  const loadCity = useCallback(async (city: string, country: string) => {
     setIsLoading(true)
     const entry = cityDatabase.find((c) => c.city === city)
     const coords = entry?.coordinates ?? mockCurrentWeather.coordinates
-    const overrides = cityWeatherOverrides[city] ?? {}
 
-    setCurrent({
-      ...mockCurrentWeather,
-      city,
-      country,
-      coordinates: coords,
-      ...overrides,
-      lastUpdated: 'Just now',
-    })
-    setForecast(mockForecast)
+    const result = await fetchWeather(coords.lat, coords.lon)
+    if (result) {
+      setCurrent({
+        ...result.current,
+        city,
+        country,
+        coordinates: coords,
+      })
+      setForecast(result.forecast)
+      setHourly(result.hourly)
+    } else {
+      setCurrent({
+        ...mockCurrentWeather,
+        city,
+        country,
+        coordinates: coords,
+        lastUpdated: 'Just now',
+      })
+      setForecast(mockForecast)
+    }
     setIsLoading(false)
   }, [])
 
@@ -50,9 +68,37 @@ export function WeatherApp() {
     if (!navigator.geolocation) return
     setIsLocating(true)
     navigator.geolocation.getCurrentPosition(
-      () => {
-        setCurrent({ ...mockCurrentWeather, lastUpdated: 'Just now' })
-        setForecast(mockForecast)
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        const result = await fetchWeather(latitude, longitude)
+
+        // Find nearest city from database
+        let nearestCity = cityDatabase[0]
+        let minDist = Infinity
+        for (const entry of cityDatabase) {
+          const dist = haversineDistance(
+            { lat: latitude, lon: longitude },
+            entry.coordinates,
+          )
+          if (dist < minDist) {
+            minDist = dist
+            nearestCity = entry
+          }
+        }
+
+        if (result) {
+          setCurrent({
+            ...result.current,
+            city: nearestCity.city,
+            country: nearestCity.country,
+            coordinates: { lat: latitude, lon: longitude },
+          })
+          setForecast(result.forecast)
+          setHourly(result.hourly)
+        } else {
+          setCurrent({ ...mockCurrentWeather, lastUpdated: 'Just now' })
+          setForecast(mockForecast)
+        }
         setIsLocating(false)
       },
       () => {
@@ -61,6 +107,10 @@ export function WeatherApp() {
       { timeout: 8000 }
     )
   }, [])
+
+  useEffect(() => {
+    loadCity('Kigali', 'Rwanda')
+  }, [loadCity])
 
   return (
     <div className="min-h-screen sky-gradient flex flex-col">
@@ -109,7 +159,7 @@ export function WeatherApp() {
       <main className="relative z-10 flex-1 px-4 pb-8 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           <CurrentWeatherCard weather={current} isLoading={isLoading} />
-          <HourlyForecast />
+          <HourlyForecast data={hourly} isLoading={isLoading} />
           <AirQualityCard coordinates={current.coordinates} />
           <WeatherDetailsCard weather={current} isLoading={isLoading} />
           <ForecastCard forecast={forecast} isLoading={isLoading} />

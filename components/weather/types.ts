@@ -47,6 +47,12 @@ export interface CurrentWeather {
   lastUpdated: string
 }
 
+export interface HourlyItem {
+  hour: string
+  temp: number
+  icon: string
+}
+
 export interface ForecastDay {
   date: string
   dayName: string
