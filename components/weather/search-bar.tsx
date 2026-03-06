@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Search, MapPin, X } from 'lucide-react'
 import { cityDatabase } from './mock-data'
 import { cn } from '@/lib/utils'
@@ -19,7 +19,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  const filterResults = useCallback(() => {
     if (query.trim().length < 2) {
       setSuggestions([])
       return
@@ -32,6 +32,10 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
     ).slice(0, 6)
     setSuggestions(results)
   }, [query])
+
+  useEffect(() => {
+    filterResults()
+  }, [filterResults])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

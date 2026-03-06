@@ -38,7 +38,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
   useEffect(() => {
     setAirQuality(null)
     fetchAirQuality(coordinates).then(setAirQuality)
-  }, [coordinates.lat, coordinates.lon])
+  }, [coordinates, coordinates.lat, coordinates.lon])
 
   if (!airQuality) return null
 
