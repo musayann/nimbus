@@ -19,9 +19,15 @@ export interface AirQuality {
   no2: number // µg/m³
 }
 
+export interface Coordinates {
+  lat: number
+  lon: number
+}
+
 export interface CurrentWeather {
   city: string
   country: string
+  coordinates: Coordinates
   temperature: number // °C
   feelsLike: number
   condition: WeatherCondition
