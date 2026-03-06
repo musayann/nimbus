@@ -45,7 +45,7 @@ export interface CurrentWeather {
   high: number
   low: number
   lastUpdated: string
-  airQuality: AirQuality
+  airQuality: AirQuality | null
 }
 
 export interface ForecastDay {

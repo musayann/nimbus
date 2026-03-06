@@ -54,45 +54,47 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
       </h2>
 
       {/* Air Quality – full-width feature block */}
-      <div className="bg-white/5 rounded-2xl p-4 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Wind className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Air Quality</span>
+      {airQuality && (
+        <div className="bg-white/5 rounded-2xl p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Wind className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Air Quality</span>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className={cn('text-2xl font-bold', getAqiColor(airQuality.aqi))}>
+                {airQuality.aqi}
+              </span>
+              <span className="text-xs text-muted-foreground">AQI</span>
+            </div>
           </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className={cn('text-2xl font-bold', getAqiColor(airQuality.aqi))}>
-              {airQuality.aqi}
+
+          {/* AQI bar */}
+          <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
+              style={{ width: `${aqiPercent(airQuality.aqi)}%` }}
+              role="progressbar"
+              aria-valuenow={airQuality.aqi}
+              aria-valuemin={0}
+              aria-valuemax={300}
+              aria-label={`Air quality index: ${airQuality.aqi}`}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className={cn('text-xs font-medium', getAqiColor(airQuality.aqi))}>
+              {airQuality.level}
             </span>
-            <span className="text-xs text-muted-foreground">AQI</span>
+            <div className="flex gap-3 text-xs text-muted-foreground">
+              <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span></span>
+              <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span></span>
+              <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span></span>
+              <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span></span>
+            </div>
           </div>
         </div>
-
-        {/* AQI bar */}
-        <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
-          <div
-            className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
-            style={{ width: `${aqiPercent(airQuality.aqi)}%` }}
-            role="progressbar"
-            aria-valuenow={airQuality.aqi}
-            aria-valuemin={0}
-            aria-valuemax={300}
-            aria-label={`Air quality index: ${airQuality.aqi}`}
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className={cn('text-xs font-medium', getAqiColor(airQuality.aqi))}>
-            {airQuality.level}
-          </span>
-          <div className="flex gap-3 text-xs text-muted-foreground">
-            <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span></span>
-            <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span></span>
-            <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span></span>
-            <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span></span>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Detail grid */}
       <div className="grid grid-cols-2 gap-3">

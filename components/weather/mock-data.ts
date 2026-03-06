@@ -30,7 +30,7 @@ export const mockCurrentWeather: CurrentWeather = {
   high: 25,
   low: 15,
   lastUpdated: 'Just now',
-  airQuality: mockAirQuality,
+  airQuality: null,
 }
 
 export const mockForecast: ForecastDay[] = [
