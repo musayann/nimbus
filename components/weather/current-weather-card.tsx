@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils'
 interface CurrentWeatherCardProps {
   weather: CurrentWeather
   isLoading?: boolean
+  onSync?: () => void
 }
 
-export function CurrentWeatherCard({ weather, isLoading }: CurrentWeatherCardProps) {
+export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeatherCardProps) {
   if (isLoading) {
     return (
       <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-[280px] animate-pulse">
@@ -35,11 +36,18 @@ export function CurrentWeatherCard({ weather, isLoading }: CurrentWeatherCardPro
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
           <span className="font-semibold text-foreground text-lg leading-tight">{weather.city}</span>
+          {weather.region && <span className="text-muted-foreground text-sm">{weather.region},</span>}
           <span className="text-muted-foreground text-sm">{weather.country}</span>
-          <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
-            <RefreshCw className="w-3 h-3" />
+          <button
+            type="button"
+            onClick={onSync}
+            disabled={isLoading}
+            className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+            aria-label="Sync weather data"
+          >
+            <RefreshCw className={cn('w-3 h-3', isLoading && 'animate-spin')} />
             {weather.lastUpdated}
-          </span>
+          </button>
         </div>
 
         {/* Main temp + icon */}
@@ -49,7 +57,7 @@ export function CurrentWeatherCard({ weather, isLoading }: CurrentWeatherCardPro
               <span className="text-7xl md:text-8xl font-bold text-foreground leading-none tracking-tighter">
                 {weather.temperature}
               </span>
-              <span className="text-3xl font-light text-muted-foreground mt-2">°C</span>
+              <span className="text-3xl font-light text-muted-foreground mt-2 pl-1">°C</span>
             </div>
             <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{weather.description}</p>
             <div className="flex items-center gap-4 mt-3">

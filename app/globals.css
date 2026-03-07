@@ -27,6 +27,8 @@
   --radius: 1rem;
   --weather-sky-top: oklch(0.13 0.06 260);
   --weather-sky-mid: oklch(0.2 0.1 240);
+  --weather-glass-dark: oklch(0.25 0.06 255 / 0.95);
+  --weather-glass-dark-border: oklch(1 0 0 / 0.1);
   --weather-glass: oklch(0.25 0.06 255 / 0.6);
   --weather-glass-border: oklch(1 0 0 / 0.1);
   --sidebar: oklch(0.18 0.05 255);
@@ -97,6 +99,13 @@
 .glass {
   background: var(--weather-glass);
   border: 1px solid var(--weather-glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-dark {
+  background: var(--weather-glass-dark);
+  border: 1px solid var(--weather-glass-dark-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }

@@ -26,6 +26,7 @@ export interface Coordinates {
 
 export interface CurrentWeather {
   city: string
+  region?: string
   country: string
   coordinates: Coordinates
   temperature: number // °C
@@ -45,6 +46,12 @@ export interface CurrentWeather {
   high: number
   low: number
   lastUpdated: string
+}
+
+export interface HourlyItem {
+  hour: string
+  temp: number
+  condition: WeatherCondition
 }
 
 export interface ForecastDay {

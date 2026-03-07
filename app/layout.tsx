@@ -6,9 +6,17 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'Nimbus – Weather App',
-  description: 'Modern weather app with 5-day forecasts and live location detection.',
-  generator: 'v0.app',
+  title: 'Igicu – Rwanda Weather',
+  description:
+    'Live weather forecasts for cities across Rwanda. Current conditions, hourly updates, and 5-day forecasts.',
+  keywords: ['Rwanda weather', 'Kigali weather', 'Rwanda forecast', 'Igicu'],
+  openGraph: {
+    title: 'Igicu – Rwanda Weather',
+    description:
+      'Live weather forecasts for cities across Rwanda. Current conditions, hourly updates, and 5-day forecasts.',
+    siteName: 'Igicu',
+    locale: 'en_RW',
+  },
   icons: {
     icon: [
       {
@@ -34,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en-RW" className={inter.variable}>
       <body className="font-sans antialiased">
         {children}
         <Analytics />

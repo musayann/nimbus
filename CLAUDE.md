@@ -1,6 +1,6 @@
-# Nimbus
+# Igicu
 
-Rwanda-focused weather application providing realistic weather data for Rwandan cities.
+Rwanda-focused weather application providing real-time weather data for Rwandan cities via the Open-Meteo API.
 
 ## Commands
 
@@ -19,8 +19,9 @@ Rwanda-focused weather application providing realistic weather data for Rwandan 
 
 ### Project structure
 
-```
+```text
 app/              → Next.js App Router pages and layouts
+app/actions/      → Server actions (weather.ts, air-quality.ts)
 components/ui/    → shadcn/ui components
 components/weather/ → Weather-specific components (weather-app, search-bar, forecast-card, etc.)
 hooks/            → Custom React hooks
@@ -31,8 +32,8 @@ public/           → Static assets
 ### Key files
 
 - `components/weather/weather-app.tsx` — Main app shell
-- `components/weather/mock-data.ts` — Mock weather data (Kigali default, Rwandan cities prioritized)
 - `components/weather/types.ts` — TypeScript types for weather data
+- `app/actions/weather.ts` — Server actions: weather fetch, city search (geocoding), reverse geocode
 
 ## Conventions
 
@@ -44,6 +45,6 @@ public/           → Static assets
 
 ## Current state
 
-- Uses **mock data** — no live weather API integration yet
+- Uses **Open-Meteo API** for live weather data (current, hourly, 5-day forecast)
 - Default city: Kigali, Rwanda
-- City database includes Rwandan cities (Kigali, Butare, Gisenyi, Ruhengeri) and select international cities
+- City database includes Rwandan cities (Kigali, Huye, Musanze, Rubavu, Muhanga, Rusizi, Nyagatare, Karongi, Rwamagana, Nyanza)
