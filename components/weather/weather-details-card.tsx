@@ -1,5 +1,6 @@
 import type { CurrentWeather } from './types'
 import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
+import { getPressureLabel } from '@/lib/weather'
 
 interface WeatherDetailsCardProps {
   weather: CurrentWeather
@@ -55,7 +56,7 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
           icon={<Gauge className="w-4 h-4" />}
           label="Pressure"
           value={`${pressure} hPa`}
-          sub={pressure >= 1013 ? 'High' : 'Low'}
+          sub={getPressureLabel(pressure)}
         />
       </div>
     </div>
