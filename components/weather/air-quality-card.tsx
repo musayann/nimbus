@@ -62,7 +62,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
+        <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'var(--weather-progress-track)' }}>
           <div
             className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
             style={{ width: `${aqiPercent(airQuality.aqi)}%` }}
