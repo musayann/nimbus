@@ -7,9 +7,11 @@ import { ForecastCard } from './forecast-card'
 import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
-import { mockCurrentWeather, mockForecast, cityDatabase } from './mock-data'
+import { cityDatabase } from './mock-data'
 import { fetchWeather } from '@/app/actions/weather'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
+
+const DEFAULT_CITY = cityDatabase[0]
 
 function haversineDistance(
   a: { lat: number; lon: number },
@@ -23,24 +25,24 @@ function haversineDistance(
   const h =
     sinLat * sinLat +
     Math.cos((a.lat * Math.PI) / 180) *
-      Math.cos((b.lat * Math.PI) / 180) *
-      sinLon *
-      sinLon
+    Math.cos((b.lat * Math.PI) / 180) *
+    sinLon *
+    sinLon
   return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h))
 }
 
 export function WeatherApp() {
-  const [current, setCurrent] = useState<CurrentWeather>(mockCurrentWeather)
-  const [forecast, setForecast] = useState<ForecastDay[]>(mockForecast)
+  const [current, setCurrent] = useState<CurrentWeather | null>(null)
+  const [forecast, setForecast] = useState<ForecastDay[]>([])
   const [hourly, setHourly] = useState<HourlyItem[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [isLocating, setIsLocating] = useState(false)
   const initializedRef = useRef(false)
 
   const loadCity = useCallback(async (city: string, country: string) => {
     setIsLoading(true)
     const entry = cityDatabase.find((c) => c.city === city)
-    const coords = entry?.coordinates ?? mockCurrentWeather.coordinates
+    const coords = entry?.coordinates ?? DEFAULT_CITY.coordinates
 
     const result = await fetchWeather(coords.lat, coords.lon)
     if (result) {
@@ -52,15 +54,6 @@ export function WeatherApp() {
       })
       setForecast(result.forecast)
       setHourly(result.hourly)
-    } else {
-      setCurrent({
-        ...mockCurrentWeather,
-        city,
-        country,
-        coordinates: coords,
-        lastUpdated: 'Just now',
-      })
-      setForecast(mockForecast)
     }
     setIsLoading(false)
   }, [])
@@ -96,9 +89,6 @@ export function WeatherApp() {
           })
           setForecast(result.forecast)
           setHourly(result.hourly)
-        } else {
-          setCurrent({ ...mockCurrentWeather, lastUpdated: 'Just now' })
-          setForecast(mockForecast)
         }
         setIsLocating(false)
       },
@@ -112,7 +102,7 @@ export function WeatherApp() {
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true
-      loadCity('Kigali', 'Rwanda')
+      loadCity(DEFAULT_CITY.city, DEFAULT_CITY.country)
     }
   }, [loadCity])
 
@@ -143,7 +133,7 @@ export function WeatherApp() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground tracking-tight">Nimbus</h1>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">Igicu</h1>
               <p className="text-xs text-muted-foreground">Weather, beautifully simple</p>
             </div>
             <div className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium">
@@ -154,7 +144,7 @@ export function WeatherApp() {
             onSearch={loadCity}
             onUseLocation={handleUseLocation}
             isLocating={isLocating}
-            currentCity={current.city}
+            currentCity={current?.city ?? DEFAULT_CITY.city}
           />
         </div>
       </header>
@@ -162,16 +152,19 @@ export function WeatherApp() {
       {/* Main content */}
       <main className="relative z-0 flex-1 px-4 pb-8 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
-          <CurrentWeatherCard weather={current} isLoading={isLoading} />
-          <HourlyForecast data={hourly} isLoading={isLoading} />
-          <AirQualityCard coordinates={current.coordinates} />
-          <WeatherDetailsCard weather={current} isLoading={isLoading} />
-          <ForecastCard forecast={forecast} isLoading={isLoading} />
-
-          {/* Footer note */}
-          <p className="text-center text-xs text-muted-foreground pb-4">
-            Displaying metric measurements · km/h · °C · hPa
-          </p>
+          {current && (
+            <>
+              <CurrentWeatherCard weather={current} isLoading={isLoading} />
+              <HourlyForecast data={hourly} isLoading={isLoading} />
+              <AirQualityCard coordinates={current.coordinates} />
+              <WeatherDetailsCard weather={current} isLoading={isLoading} />
+              <ForecastCard forecast={forecast} isLoading={isLoading} />
+              {/* Footer note */}
+              <p className="text-center text-xs text-muted-foreground pb-4">
+                Displaying metric measurements · km/h · °C · hPa
+              </p>
+            </>
+          )}
         </div>
       </main>
     </div>

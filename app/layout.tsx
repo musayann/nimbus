@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'Nimbus – Weather App',
+  title: 'Igicu – Weather App',
   description: 'Modern weather app with 5-day forecasts and live location detection.',
   generator: 'v0.app',
   icons: {
