@@ -154,7 +154,7 @@ export function WeatherApp() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {current && (
             <>
-              <CurrentWeatherCard weather={current} isLoading={isLoading} />
+              <CurrentWeatherCard weather={current} isLoading={isLoading} onSync={() => loadCity(current.city, current.country)} />
               <HourlyForecast data={hourly} isLoading={isLoading} />
               <AirQualityCard coordinates={current.coordinates} />
               <WeatherDetailsCard weather={current} isLoading={isLoading} />
