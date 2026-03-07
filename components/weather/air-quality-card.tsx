@@ -11,21 +11,21 @@ interface AirQualityCardProps {
 }
 
 function getAqiColor(aqi: number): string {
-  if (aqi <= 50) return 'text-emerald-400'
-  if (aqi <= 100) return 'text-yellow-400'
-  if (aqi <= 150) return 'text-orange-400'
-  if (aqi <= 200) return 'text-red-400'
-  if (aqi <= 300) return 'text-purple-400'
-  return 'text-rose-600'
+  if (aqi <= 50) return 'text-emerald-600 dark:text-emerald-400'
+  if (aqi <= 100) return 'text-yellow-600 dark:text-yellow-400'
+  if (aqi <= 150) return 'text-orange-600 dark:text-orange-400'
+  if (aqi <= 200) return 'text-red-600 dark:text-red-400'
+  if (aqi <= 300) return 'text-purple-600 dark:text-purple-400'
+  return 'text-rose-700 dark:text-rose-600'
 }
 
 function getAqiBarColor(aqi: number): string {
-  if (aqi <= 50) return 'bg-emerald-400'
-  if (aqi <= 100) return 'bg-yellow-400'
-  if (aqi <= 150) return 'bg-orange-400'
-  if (aqi <= 200) return 'bg-red-400'
-  if (aqi <= 300) return 'bg-purple-400'
-  return 'bg-rose-600'
+  if (aqi <= 50) return 'bg-emerald-600 dark:bg-emerald-400'
+  if (aqi <= 100) return 'bg-yellow-600 dark:bg-yellow-400'
+  if (aqi <= 150) return 'bg-orange-600 dark:bg-orange-400'
+  if (aqi <= 200) return 'bg-red-600 dark:bg-red-400'
+  if (aqi <= 300) return 'bg-purple-600 dark:bg-purple-400'
+  return 'bg-rose-700 dark:bg-rose-600'
 }
 
 function aqiPercent(aqi: number): number {
@@ -48,7 +48,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      <div className="bg-white/5 rounded-2xl p-4 flex flex-col gap-3">
+      <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wind className="w-4 h-4 text-muted-foreground" />
@@ -62,7 +62,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
+        <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'var(--weather-progress-track)' }}>
           <div
             className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
             style={{ width: `${aqiPercent(airQuality.aqi)}%` }}
