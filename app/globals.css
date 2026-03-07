@@ -31,7 +31,6 @@
   --weather-glass-dark-border: oklch(0 0 0 / 0.08);
   --weather-glass: oklch(1 0 0 / 0.55);
   --weather-glass-border: oklch(0 0 0 / 0.08);
-  --weather-tile: oklch(0.78 0.06 225 / 0.45);
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.15 0.04 255);
   --sidebar-primary: oklch(0.52 0.18 215);
@@ -75,7 +74,6 @@
   --weather-glass-dark-border: oklch(1 0 0 / 0.1);
   --weather-glass: oklch(0.25 0.06 255 / 0.6);
   --weather-glass-border: oklch(1 0 0 / 0.1);
-  --weather-tile: oklch(1 0 0 / 0.07);
   --sidebar: oklch(0.18 0.05 255);
   --sidebar-foreground: oklch(0.97 0.01 240);
   --sidebar-primary: oklch(0.65 0.18 215);
@@ -155,9 +153,6 @@
   -webkit-backdrop-filter: blur(16px);
 }
 
-.weather-tile {
-  background: var(--weather-tile);
-  border: 1px solid var(--weather-glass-border);
-}
+.sky-gradient {
   background: linear-gradient(160deg, var(--weather-sky-top) 0%, var(--weather-sky-mid) 100%);
 }

@@ -74,7 +74,7 @@ interface DetailTileProps {
 
 function DetailTile({ icon, label, value, sub, bar, barValue = 0, barMax = 100 }: DetailTileProps) {
   return (
-    <div className="weather-tile rounded-2xl px-4 py-3.5 flex flex-col gap-2">
+    <div className="bg-white/5 rounded-2xl px-4 py-3.5 flex flex-col gap-2">
       <div className="flex items-center gap-1.5 text-muted-foreground">
         {icon}
         <span className="text-xs">{label}</span>
@@ -82,7 +82,7 @@ function DetailTile({ icon, label, value, sub, bar, barValue = 0, barMax = 100 }
       <span className="text-xl font-bold text-foreground leading-none">{value}</span>
       {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
       {bar && (
-        <div className="h-1.5 rounded-full overflow-hidden mt-0.5" style={{ background: 'var(--weather-tile)' }}>
+        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mt-0.5">
           <div
             className="h-full rounded-full bg-primary transition-all duration-700"
             style={{ width: `${(barValue / barMax) * 100}%` }}

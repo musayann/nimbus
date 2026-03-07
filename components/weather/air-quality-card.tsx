@@ -48,7 +48,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
+      <div className="bg-white/5 rounded-2xl p-4 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wind className="w-4 h-4 text-muted-foreground" />
@@ -62,7 +62,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'var(--weather-tile)' }}>
+        <div className="relative h-2 rounded-full bg-white/10 overflow-hidden">
           <div
             className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
             style={{ width: `${aqiPercent(airQuality.aqi)}%` }}

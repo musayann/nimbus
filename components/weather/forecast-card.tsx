@@ -50,7 +50,7 @@ export function ForecastCard({ forecast, isLoading }: ForecastCardProps) {
 
 function ForecastDayTile({ day }: { day: ForecastDay }) {
   return (
-    <div className="flex flex-col items-center gap-3 weather-tile rounded-2xl px-2 py-4 hover:opacity-80 transition-opacity">
+    <div className="flex flex-col items-center gap-3 bg-white/5 rounded-2xl px-2 py-4 hover:bg-white/10 transition-colors">
       <span className="text-xs font-semibold text-muted-foreground uppercase">{day.dayName}</span>
       <WeatherIcon condition={day.condition} size={40} />
       <div className="text-center">
@@ -67,7 +67,7 @@ function ForecastDayTile({ day }: { day: ForecastDay }) {
 
 function ForecastDayRow({ day }: { day: ForecastDay }) {
   return (
-    <div className="flex items-center justify-between weather-tile rounded-2xl px-4 py-3 hover:opacity-80 transition-opacity">
+    <div className="flex items-center justify-between bg-white/5 rounded-2xl px-4 py-3 hover:bg-white/10 transition-colors">
       <div className="flex items-center gap-3 w-28">
         <WeatherIcon condition={day.condition} size={36} />
         <div>

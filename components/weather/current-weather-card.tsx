@@ -95,7 +95,7 @@ export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeathe
 
 function StatPill({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="weather-tile rounded-2xl px-3 py-2.5 flex flex-col gap-0.5">
+    <div className="bg-white/5 rounded-2xl px-3 py-2.5 flex flex-col gap-0.5">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className={cn('text-sm font-semibold', highlight ? 'text-accent' : 'text-foreground')}>
         {value}
@@ -106,7 +106,7 @@ function StatPill({ label, value, highlight }: { label: string; value: string; h
 
 function SunPill({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 weather-tile rounded-2xl px-3 py-2 flex-1 min-w-[100px]">
+    <div className="flex items-center gap-2 bg-white/5 rounded-2xl px-3 py-2 flex-1 min-w-[100px]">
       <span className="text-muted-foreground flex-shrink-0" aria-hidden>{icon}</span>
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>
