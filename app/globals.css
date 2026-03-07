@@ -31,6 +31,8 @@
   --weather-glass-dark-border: oklch(0 0 0 / 0.08);
   --weather-glass: oklch(1 0 0 / 0.55);
   --weather-glass-border: oklch(0 0 0 / 0.08);
+  --weather-tile: oklch(0.76 0.07 225 / 0.35);
+  --weather-tile-border: oklch(0.55 0.1 225 / 0.25);
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.15 0.04 255);
   --sidebar-primary: oklch(0.52 0.18 215);
@@ -74,6 +76,8 @@
   --weather-glass-dark-border: oklch(1 0 0 / 0.1);
   --weather-glass: oklch(0.25 0.06 255 / 0.6);
   --weather-glass-border: oklch(1 0 0 / 0.1);
+  --weather-tile: oklch(1 0 0 / 0.05);
+  --weather-tile-border: oklch(1 0 0 / 0.08);
   --sidebar: oklch(0.18 0.05 255);
   --sidebar-foreground: oklch(0.97 0.01 240);
   --sidebar-primary: oklch(0.65 0.18 215);
@@ -151,6 +155,11 @@
   border: 1px solid var(--weather-glass-dark-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+.weather-tile {
+  background: var(--weather-tile);
+  border: 1px solid var(--weather-tile-border);
 }
 
 .sky-gradient {
