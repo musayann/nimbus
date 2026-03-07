@@ -124,6 +124,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
             >
               <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
               <span className="text-sm text-foreground">{s.name}</span>
+              {s.region && <span className="text-xs text-muted-foreground">{s.region}</span>}
               <span className="text-xs text-muted-foreground ml-auto">{s.country}</span>
             </button>
           ))}
