@@ -14,7 +14,7 @@ interface CurrentWeatherCardProps {
 export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeatherCardProps) {
   if (isLoading) {
     return (
-      <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-[280px] animate-pulse">
+      <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-70 animate-pulse">
         <div className="w-24 h-24 rounded-full bg-white/10" />
         <div className="w-32 h-12 rounded-xl bg-white/10" />
         <div className="w-48 h-4 rounded bg-white/10" />
@@ -33,11 +33,12 @@ export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeathe
 
       <div className="flex flex-col gap-6">
         {/* Location */}
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-          <span className="font-semibold text-foreground text-lg leading-tight">{weather.city}</span>
-          {weather.region && <span className="text-muted-foreground text-sm">{weather.region},</span>}
-          <span className="text-muted-foreground text-sm">{weather.country}</span>
+        <div className="flex items-start gap-2">
+          <MapPin className="w-4 h-4 text-primary shrink-0 pt-1" />
+          <div className='flex flex-col'>
+            <span className="font-semibold text-foreground text-lg leading-tight">{weather.city}</span>
+            {weather.region && <span className="text-muted-foreground text-sm">{weather.region}</span>}
+          </div>
           <button
             type="button"
             onClick={onSync}

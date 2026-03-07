@@ -85,7 +85,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-y-1">
+        <div className="md:flex items-center justify-between gap-y-1">
           <span className={cn('text-xs font-medium', getAqiColor(airQuality.aqi))}>
             {airQuality.level}
           </span>

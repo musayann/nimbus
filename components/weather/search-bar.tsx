@@ -80,7 +80,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
-            placeholder={`Search city... (${currentCity})`}
+            placeholder={`Search place...`}
             className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm outline-none min-w-0"
             aria-label="Search for a city"
             autoComplete="off"
