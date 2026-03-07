@@ -165,9 +165,8 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
   try {
     const params = new URLSearchParams({
       name: query.trim(),
-      count: "6",
+      count: "20",
       language: "en",
-      country_code: "RW",
     });
     const res = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?${params}`,
@@ -175,14 +174,17 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.results) return [];
-    return data.results.map(
-      (r: { name: string; country: string; latitude: number; longitude: number }) => ({
-        name: r.name,
-        country: r.country,
-        lat: r.latitude,
-        lon: r.longitude,
-      }),
-    );
+    console.log(data.results);
+    return data.results
+      .filter((r: { country_code: string }) => r.country_code === "RW")
+      .map(
+        (r: { name: string; country: string; latitude: number; longitude: number }) => ({
+          name: r.name,
+          country: r.country,
+          lat: r.latitude,
+          lon: r.longitude,
+        }),
+      );
   } catch {
     return [];
   }
