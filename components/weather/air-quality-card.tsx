@@ -11,21 +11,21 @@ interface AirQualityCardProps {
 }
 
 function getAqiColor(aqi: number): string {
-  if (aqi <= 50) return 'text-emerald-400'
-  if (aqi <= 100) return 'text-yellow-400'
-  if (aqi <= 150) return 'text-orange-400'
-  if (aqi <= 200) return 'text-red-400'
-  if (aqi <= 300) return 'text-purple-400'
-  return 'text-rose-600'
+  if (aqi <= 50) return 'text-emerald-600 dark:text-emerald-400'
+  if (aqi <= 100) return 'text-yellow-600 dark:text-yellow-400'
+  if (aqi <= 150) return 'text-orange-600 dark:text-orange-400'
+  if (aqi <= 200) return 'text-red-600 dark:text-red-400'
+  if (aqi <= 300) return 'text-purple-600 dark:text-purple-400'
+  return 'text-rose-700 dark:text-rose-600'
 }
 
 function getAqiBarColor(aqi: number): string {
-  if (aqi <= 50) return 'bg-emerald-400'
-  if (aqi <= 100) return 'bg-yellow-400'
-  if (aqi <= 150) return 'bg-orange-400'
-  if (aqi <= 200) return 'bg-red-400'
-  if (aqi <= 300) return 'bg-purple-400'
-  return 'bg-rose-600'
+  if (aqi <= 50) return 'bg-emerald-600 dark:bg-emerald-400'
+  if (aqi <= 100) return 'bg-yellow-600 dark:bg-yellow-400'
+  if (aqi <= 150) return 'bg-orange-600 dark:bg-orange-400'
+  if (aqi <= 200) return 'bg-red-600 dark:bg-red-400'
+  if (aqi <= 300) return 'bg-purple-600 dark:bg-purple-400'
+  return 'bg-rose-700 dark:bg-rose-600'
 }
 
 function aqiPercent(aqi: number): number {
