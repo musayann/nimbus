@@ -52,7 +52,7 @@ export async function fetchWeather(
       forecast_days: "6",
       current:
         "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,visibility,uv_index,dew_point_2m",
-      hourly: "temperature_2m,weather_code",
+      hourly: "temperature_2m,weather_code,precipitation_probability",
       daily:
         "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,relative_humidity_2m_max",
     });
@@ -132,6 +132,7 @@ export async function fetchWeather(
         hour,
         temp: Math.round(data.hourly.temperature_2m[idx]),
         condition: mapWmoCode(data.hourly.weather_code[idx]).condition,
+        precipitationProbability: data.hourly.precipitation_probability[idx] ?? 0,
       });
     }
 

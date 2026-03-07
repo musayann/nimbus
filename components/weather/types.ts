@@ -52,6 +52,7 @@ export interface HourlyItem {
   hour: string
   temp: number
   condition: WeatherCondition
+  precipitationProbability: number // %
 }
 
 export interface ForecastDay {

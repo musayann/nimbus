@@ -1,5 +1,6 @@
 'use client'
 
+import { Droplets } from 'lucide-react'
 import type { HourlyItem } from './types'
 import { WeatherIcon } from './weather-icon'
 
@@ -56,6 +57,12 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
                   />
                 </div>
                 <span className="text-sm font-semibold text-foreground">{item.temp}°</span>
+                {item.precipitationProbability > 0 && (
+                  <span className="flex items-center gap-0.5 text-[10px] text-blue-500 font-medium">
+                    <Droplets className="w-3 h-3" />
+                    {item.precipitationProbability}%
+                  </span>
+                )}
               </div>
             )
           })}
