@@ -128,9 +128,10 @@ export async function fetchWeather(
     }
 
     // Hourly (next 12 hours from current hour)
-    const nowISO = data.current.time;
+    // current.time may include minutes (e.g. "2026-03-07T14:30"), truncate to hour
+    const currentHour = data.current.time.slice(0, 13) + ":00";
     const currentHourIndex = data.hourly.time.findIndex(
-      (t: string) => t === nowISO,
+      (t: string) => t === currentHour,
     );
     const startIndex = currentHourIndex >= 0 ? currentHourIndex : 0;
     const hourly: HourlyItem[] = [];
