@@ -151,3 +151,69 @@ export async function fetchWeather(
     return null;
   }
 }
+
+export interface GeoResult {
+  name: string;
+  country: string;
+  lat: number;
+  lon: number;
+}
+
+export async function searchCities(query: string): Promise<GeoResult[]> {
+  if (!query.trim()) return [];
+  try {
+    const params = new URLSearchParams({
+      name: query.trim(),
+      count: "6",
+      language: "en",
+      country_code: "RW",
+    });
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?${params}`,
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!data.results) return [];
+    return data.results.map(
+      (r: { name: string; country: string; latitude: number; longitude: number }) => ({
+        name: r.name,
+        country: r.country,
+        lat: r.latitude,
+        lon: r.longitude,
+      }),
+    );
+  } catch {
+    return [];
+  }
+}
+
+export async function reverseGeocode(
+  lat: number,
+  lon: number,
+): Promise<GeoResult | null> {
+  try {
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lon: lon.toString(),
+      format: "json",
+      zoom: "10",
+    });
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?${params}`,
+      { headers: { "User-Agent": "Igicu Weather App" } },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.address?.country_code !== "rw") return null;
+    const name =
+      data.address?.city ??
+      data.address?.town ??
+      data.address?.village ??
+      data.address?.municipality ??
+      data.name;
+    if (!name) return null;
+    return { name, country: "Rwanda", lat, lon };
+  } catch {
+    return null;
+  }
+}

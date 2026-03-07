@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Search, MapPin, X } from 'lucide-react'
-import { cityDatabase } from './mock-data'
+import { searchCities, type GeoResult } from '@/app/actions/weather'
 import { cn } from '@/lib/utils'
 
 interface SearchBarProps {
-  onSearch: (city: string, country: string) => void
+  onSearch: (city: string, country: string, lat: number, lon: number) => void
   onUseLocation: () => void
   isLocating: boolean
   currentCity: string
@@ -14,28 +14,26 @@ interface SearchBarProps {
 
 export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: SearchBarProps) {
   const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<{ city: string; country: string }[]>([])
+  const [suggestions, setSuggestions] = useState<GeoResult[]>([])
   const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-
-  const filterResults = useCallback(() => {
-    if (query.trim().length === 0) {
-      setSuggestions(cityDatabase.map((c) => ({ city: c.city, country: c.country })))
-      return
-    }
-    const lower = query.toLowerCase()
-    const results = cityDatabase.filter(
-      (c) =>
-        c.city.toLowerCase().includes(lower) ||
-        c.country.toLowerCase().includes(lower)
-    ).slice(0, 6)
-    setSuggestions(results)
-  }, [query])
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
 
   useEffect(() => {
-    filterResults()
-  }, [filterResults])
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (!query.trim()) {
+      setSuggestions([])
+      return
+    }
+    debounceRef.current = setTimeout(async () => {
+      const results = await searchCities(query)
+      setSuggestions(results)
+    }, 300)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [query])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -48,8 +46,8 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  function handleSelect(city: string, country: string) {
-    onSearch(city, country)
+  function handleSelect(result: GeoResult) {
+    onSearch(result.name, result.country, result.lat, result.lon)
     setQuery('')
     setSuggestions([])
     setIsFocused(false)
@@ -58,14 +56,8 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!query.trim()) return
-    const match = cityDatabase.find(
-      (c) => c.city.toLowerCase() === query.trim().toLowerCase()
-    )
-    if (match) {
-      handleSelect(match.city, match.country)
-    } else if (suggestions.length > 0) {
-      handleSelect(suggestions[0].city, suggestions[0].country)
+    if (suggestions.length > 0) {
+      handleSelect(suggestions[0])
     }
   }
 
@@ -108,7 +100,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
             onClick={onUseLocation}
             disabled={isLocating}
             className={cn(
-              'flex items-center gap-1.5 text-xs font-medium transition-colors flex-shrink-0',
+              'flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer flex-shrink-0',
               isLocating
                 ? 'text-muted-foreground cursor-not-allowed'
                 : 'text-primary hover:text-accent'
@@ -127,11 +119,11 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
             <button
               key={i}
               type="button"
-              onClick={() => handleSelect(s.city, s.country)}
+              onClick={() => handleSelect(s)}
               className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/10 transition-colors"
             >
               <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-              <span className="text-sm text-foreground">{s.city}</span>
+              <span className="text-sm text-foreground">{s.name}</span>
               <span className="text-xs text-muted-foreground ml-auto">{s.country}</span>
             </button>
           ))}

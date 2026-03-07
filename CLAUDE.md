@@ -32,9 +32,8 @@ public/           → Static assets
 ### Key files
 
 - `components/weather/weather-app.tsx` — Main app shell
-- `components/weather/mock-data.ts` — City database (Rwandan cities with coordinates)
 - `components/weather/types.ts` — TypeScript types for weather data
-- `app/actions/weather.ts` — Server action fetching from Open-Meteo API
+- `app/actions/weather.ts` — Server actions: weather fetch, city search (geocoding), reverse geocode
 
 ## Conventions
 
