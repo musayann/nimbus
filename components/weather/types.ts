@@ -26,6 +26,7 @@ export interface Coordinates {
 
 export interface CurrentWeather {
   city: string
+  region?: string
   country: string
   coordinates: Coordinates
   temperature: number // °C

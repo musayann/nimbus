@@ -7,7 +7,8 @@ import { ForecastCard } from './forecast-card'
 import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
-import { fetchWeather, reverseGeocode } from '@/app/actions/weather'
+import { fetchWeather } from '@/app/actions/weather'
+import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
 
 const KIGALI = { city: 'Kigali', country: 'Rwanda', lat: -1.9525, lon: 30.115 }
@@ -20,13 +21,14 @@ export function WeatherApp() {
   const [isLocating, setIsLocating] = useState(false)
   const initializedRef = useRef(false)
 
-  const loadCity = useCallback(async (city: string, country: string, lat: number, lon: number) => {
+  const loadCity = useCallback(async (city: string, country: string, lat: number, lon: number, region?: string) => {
     setIsLoading(true)
     const result = await fetchWeather(lat, lon)
     if (result) {
       setCurrent({
         ...result.current,
         city,
+        region,
         country,
         coordinates: { lat, lon },
       })
@@ -125,7 +127,7 @@ export function WeatherApp() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           {current && (
             <>
-              <CurrentWeatherCard weather={current} isLoading={isLoading} onSync={() => loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon)} />
+              <CurrentWeatherCard weather={current} isLoading={isLoading} onSync={() => loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon, current.region)} />
               <HourlyForecast data={hourly} isLoading={isLoading} />
               <AirQualityCard coordinates={current.coordinates} />
               <WeatherDetailsCard weather={current} isLoading={isLoading} />

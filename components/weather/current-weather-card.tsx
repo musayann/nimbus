@@ -36,6 +36,7 @@ export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeathe
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
           <span className="font-semibold text-foreground text-lg leading-tight">{weather.city}</span>
+          {weather.region && <span className="text-muted-foreground text-sm">{weather.region},</span>}
           <span className="text-muted-foreground text-sm">{weather.country}</span>
           <button
             type="button"

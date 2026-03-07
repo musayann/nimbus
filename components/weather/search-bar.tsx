@@ -2,11 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Search, MapPin, X } from 'lucide-react'
-import { searchCities, type GeoResult } from '@/app/actions/weather'
+import { searchCities, type GeoResult } from '@/app/actions/location'
 import { cn } from '@/lib/utils'
 
 interface SearchBarProps {
-  onSearch: (city: string, country: string, lat: number, lon: number) => void
+  onSearch: (city: string, country: string, lat: number, lon: number, region?: string) => void
   onUseLocation: () => void
   isLocating: boolean
   currentCity: string
@@ -47,7 +47,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
   }, [])
 
   function handleSelect(result: GeoResult) {
-    onSearch(result.name, result.country, result.lat, result.lon)
+    onSearch(result.name, result.country, result.lat, result.lon, result.region)
     setQuery('')
     setSuggestions([])
     setIsFocused(false)
