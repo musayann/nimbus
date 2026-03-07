@@ -85,11 +85,11 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-y-1">
+        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-y-1">
           <span className={cn('text-xs font-medium', getAqiColor(airQuality.aqi))}>
             {airQuality.level}
           </span>
-          <div className="flex gap-3 text-xs text-muted-foreground">
+          <div className="flex mt-4 md:mt-0 flex-1 md:flex-none gap-3 justify-between text-xs text-muted-foreground">
             <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span></span>
             <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span></span>
             <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span></span>
