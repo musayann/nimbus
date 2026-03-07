@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Search, MapPin, X } from 'lucide-react'
-import { searchCities, type GeoResult } from '@/app/actions/location'
+import { searchCities } from '@/app/actions/location'
 import { cn } from '@/lib/utils'
+import { GeoResult } from '@/lib/geo'
 
 interface SearchBarProps {
   onSearch: (city: string, country: string, lat: number, lon: number, region?: string) => void
