@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en-RW" className={inter.variable}>
       <body className="font-sans antialiased">
         {children}
         <Analytics />

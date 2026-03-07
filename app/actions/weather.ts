@@ -104,12 +104,12 @@ export async function fetchWeather(
 
     // Forecast (days 1-5)
     const forecast: ForecastDay[] = [];
-    const dateFmt = new Intl.DateTimeFormat("en-US", {
+    const dateFmt = new Intl.DateTimeFormat("en-RW", {
       weekday: "short",
       month: "short",
       day: "numeric",
     });
-    const dayFmt = new Intl.DateTimeFormat("en-US", { weekday: "short" });
+    const dayFmt = new Intl.DateTimeFormat("en-RW", { weekday: "short" });
 
     for (let i = 1; i <= 5; i++) {
       const d = new Date(data.daily.time[i]);
