@@ -48,7 +48,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      <div className="bg-white/5 rounded-2xl p-4 flex flex-col gap-3">
+      <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Wind className="w-4 h-4 text-muted-foreground" />

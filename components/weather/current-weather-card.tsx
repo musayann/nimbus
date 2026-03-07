@@ -106,7 +106,7 @@ function StatPill({ label, value, highlight }: { label: string; value: string; h
 
 function SunPill({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 weather-tile rounded-2xl px-3 py-2 flex-1 min-w-[100px]">
+    <div className="flex items-center gap-2 weather-tile rounded-2xl px-3 py-2 flex-1 min-w-25">
       <span className="text-muted-foreground flex-shrink-0" aria-hidden>{icon}</span>
       <div>
         <p className="text-xs text-muted-foreground">{label}</p>

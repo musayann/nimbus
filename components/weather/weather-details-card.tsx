@@ -74,7 +74,7 @@ interface DetailTileProps {
 
 function DetailTile({ icon, label, value, sub, bar, barValue = 0, barMax = 100 }: DetailTileProps) {
   return (
-    <div className="bg-white/5 rounded-2xl px-4 py-3.5 flex flex-col gap-2">
+    <div className="weather-tile rounded-2xl px-4 py-3.5 flex flex-col gap-2">
       <div className="flex items-center gap-1.5 text-muted-foreground">
         {icon}
         <span className="text-xs">{label}</span>
