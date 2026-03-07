@@ -1,6 +1,6 @@
 import type { CurrentWeather } from './types'
 import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
-import { getPressureLabel } from '@/lib/weather'
+import { getDewPointLabel, getPressureLabel } from '@/lib/weather'
 
 interface WeatherDetailsCardProps {
   weather: CurrentWeather
@@ -41,7 +41,7 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
           icon={<Thermometer className="w-4 h-4" />}
           label="Dew Point"
           value={`${dewPoint}°C`}
-          sub={dewPoint >= 20 ? 'Muggy' : dewPoint >= 13 ? 'Comfortable' : 'Dry'}
+          sub={getDewPointLabel(dewPoint)}
         />
         <DetailTile
           icon={<Droplets className="w-4 h-4" />}
