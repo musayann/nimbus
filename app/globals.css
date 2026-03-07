@@ -4,6 +4,49 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Weather App – Light Sky Theme */
+  --background: oklch(0.97 0.01 230);
+  --foreground: oklch(0.15 0.04 255);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.04 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.04 255);
+  --primary: oklch(0.52 0.18 215);
+  --primary-foreground: oklch(0.97 0.01 230);
+  --secondary: oklch(0.92 0.03 230);
+  --secondary-foreground: oklch(0.3 0.06 255);
+  --muted: oklch(0.92 0.03 230);
+  --muted-foreground: oklch(0.48 0.05 240);
+  --accent: oklch(0.58 0.15 190);
+  --accent-foreground: oklch(0.97 0.01 230);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.86 0.03 230);
+  --input: oklch(0.92 0.03 230);
+  --ring: oklch(0.52 0.18 215);
+  --radius: 1rem;
+  --weather-sky-top: oklch(0.82 0.1 220);
+  --weather-sky-mid: oklch(0.93 0.05 210);
+  --weather-glass-dark: oklch(1 0 0 / 0.85);
+  --weather-glass-dark-border: oklch(0 0 0 / 0.08);
+  --weather-glass: oklch(1 0 0 / 0.55);
+  --weather-glass-border: oklch(0 0 0 / 0.08);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.15 0.04 255);
+  --sidebar-primary: oklch(0.52 0.18 215);
+  --sidebar-primary-foreground: oklch(0.97 0.01 230);
+  --sidebar-accent: oklch(0.92 0.03 230);
+  --sidebar-accent-foreground: oklch(0.3 0.06 255);
+  --sidebar-border: oklch(0.86 0.03 230);
+  --sidebar-ring: oklch(0.52 0.18 215);
+  --chart-1: oklch(0.52 0.18 215);
+  --chart-2: oklch(0.58 0.15 190);
+  --chart-3: oklch(0.65 0.12 220);
+  --chart-4: oklch(0.45 0.2 260);
+  --chart-5: oklch(0.55 0.16 200);
+}
+
+.dark {
   /* Weather App – Deep Night Sky Theme */
   --background: oklch(0.13 0.04 255);
   --foreground: oklch(0.97 0.01 240);
