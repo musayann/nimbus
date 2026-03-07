@@ -20,7 +20,6 @@ interface REMAFeature {
   };
   properties: {
     aqi: number;
-    lvl: string;
     data: REMAReading[];
   };
 }
@@ -44,14 +43,13 @@ function haversineDistance(a: Coordinates, b: Coordinates): number {
   return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
-function mapLevel(lvl: string): AirQualityLevel {
-  const l = lvl.toLowerCase();
-  if (l.includes("hazardous")) return "Hazardous";
-  if (l.includes("very")) return "Very Unhealthy";
-  if (l.includes("sensitive")) return "Unhealthy for Sensitive Groups";
-  if (l.includes("unhealthy")) return "Unhealthy";
-  if (l.includes("moderate")) return "Moderate";
-  return "Good";
+function levelFromAqi(aqi: number): AirQualityLevel {
+  if (aqi <= 50) return "Good";
+  if (aqi <= 100) return "Moderate";
+  if (aqi <= 150) return "Unhealthy for Sensitive Groups";
+  if (aqi <= 200) return "Unhealthy";
+  if (aqi <= 300) return "Very Unhealthy";
+  return "Hazardous";
 }
 
 export async function fetchAirQuality(
@@ -78,12 +76,12 @@ export async function fetchAirQuality(
         nearest = f;
       }
     }
-    const { aqi, lvl, data } = nearest.properties;
+    const { aqi, data } = nearest.properties;
     const latest = data[data.length - 1] ?? {};
 
     return {
       aqi,
-      level: mapLevel(lvl),
+      level: levelFromAqi(aqi),
       pm25: latest.PM25 ?? 0,
       pm10: latest.PM10 ?? 0,
       o3: latest.O3 ?? 0,
