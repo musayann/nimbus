@@ -107,7 +107,7 @@ export function WeatherApp() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-foreground tracking-tight">Igicu</h1>
-              <p className="text-xs text-muted-foreground">Weather, beautifully simple</p>
+              <p className="text-xs text-muted-foreground">Live weather for Rwanda</p>
             </div>
             <div className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium">
               Metric · °C

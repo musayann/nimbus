@@ -57,7 +57,7 @@ export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeathe
               <span className="text-7xl md:text-8xl font-bold text-foreground leading-none tracking-tighter">
                 {weather.temperature}
               </span>
-              <span className="text-3xl font-light text-muted-foreground mt-2">°C</span>
+              <span className="text-3xl font-light text-muted-foreground mt-2 pl-1">°C</span>
             </div>
             <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{weather.description}</p>
             <div className="flex items-center gap-4 mt-3">

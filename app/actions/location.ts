@@ -1,7 +1,6 @@
 "use server";
 
 import { parseGeoResults, type GeoResult } from "@/lib/geo";
-export type { GeoResult };
 
 export async function searchCities(query: string): Promise<GeoResult[]> {
   if (!query.trim()) return [];
