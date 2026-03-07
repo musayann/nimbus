@@ -19,13 +19,13 @@ function getAqiColor(aqi: number): string {
   return 'text-rose-700 dark:text-rose-600'
 }
 
-function getAqiBarColor(aqi: number): string {
-  if (aqi <= 50) return 'bg-emerald-600 dark:bg-emerald-400'
-  if (aqi <= 100) return 'bg-yellow-600 dark:bg-yellow-400'
-  if (aqi <= 150) return 'bg-orange-600 dark:bg-orange-400'
-  if (aqi <= 200) return 'bg-red-600 dark:bg-red-400'
-  if (aqi <= 300) return 'bg-purple-600 dark:bg-purple-400'
-  return 'bg-rose-700 dark:bg-rose-600'
+function getAqiHex(aqi: number): string {
+  if (aqi <= 50) return '#22c55e'
+  if (aqi <= 100) return '#facc15'
+  if (aqi <= 150) return '#f97316'
+  if (aqi <= 200) return '#ef4444'
+  if (aqi <= 300) return '#a855f7'
+  return '#881337'
 }
 
 function aqiPercent(aqi: number): number {
@@ -62,16 +62,27 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
           </div>
         </div>
 
-        <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'var(--weather-progress-track)' }}>
+        <div
+          className="relative h-2 rounded-full my-1"
+          role="progressbar"
+          aria-valuenow={airQuality.aqi}
+          aria-valuemin={0}
+          aria-valuemax={300}
+          aria-label={`Air quality index: ${airQuality.aqi}`}
+        >
           <div
-            className={cn('absolute inset-y-0 left-0 rounded-full transition-all duration-700', getAqiBarColor(airQuality.aqi))}
-            style={{ width: `${aqiPercent(airQuality.aqi)}%` }}
-            role="progressbar"
-            aria-valuenow={airQuality.aqi}
-            aria-valuemin={0}
-            aria-valuemax={300}
-            aria-label={`Air quality index: ${airQuality.aqi}`}
+            className="absolute inset-0 rounded-full"
+            style={{ background: 'linear-gradient(to right, #22c55e, #facc15, #f97316, #ef4444, #a855f7, #881337)' }}
           />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-all duration-700 z-10"
+            style={{ left: `${aqiPercent(airQuality.aqi)}%` }}
+          >
+            <div
+              className="w-4 h-4 rounded-full border-2 shadow-md border-black/75 dark:border-white/75"
+              style={{ backgroundColor: getAqiHex(airQuality.aqi)}}
+            />
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
