@@ -36,18 +36,6 @@ function degreesToCardinal(deg: number): string {
   return directions[index];
 }
 
-function wmoToEmoji(code: number): string {
-  if (code === 0) return "\u2600\uFE0F";
-  if (code <= 2) return "\u26C5";
-  if (code === 3) return "\uD83C\uDF25";
-  if (code >= 45 && code <= 48) return "\uD83C\uDF2B\uFE0F";
-  if (code >= 51 && code <= 67) return "\uD83C\uDF27";
-  if (code >= 71 && code <= 77) return "\uD83C\uDF28";
-  if (code >= 80 && code <= 82) return "\uD83C\uDF26";
-  if (code >= 95 && code <= 99) return "\u26C8\uFE0F";
-  return "\uD83C\uDF25";
-}
-
 export async function fetchWeather(
   lat: number,
   lon: number,
@@ -143,7 +131,7 @@ export async function fetchWeather(
       hourly.push({
         hour,
         temp: Math.round(data.hourly.temperature_2m[idx]),
-        icon: wmoToEmoji(data.hourly.weather_code[idx]),
+        condition: mapWmoCode(data.hourly.weather_code[idx]).condition,
       });
     }
 

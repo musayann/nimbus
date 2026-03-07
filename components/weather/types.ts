@@ -51,7 +51,7 @@ export interface CurrentWeather {
 export interface HourlyItem {
   hour: string
   temp: number
-  icon: string
+  condition: WeatherCondition
 }
 
 export interface ForecastDay {

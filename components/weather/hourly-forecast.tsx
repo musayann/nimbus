@@ -1,6 +1,7 @@
 'use client'
 
 import type { HourlyItem } from './types'
+import { WeatherIcon } from './weather-icon'
 
 interface HourlyForecastProps {
   data?: HourlyItem[]
@@ -46,7 +47,7 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
             return (
               <div key={i} className="flex flex-col items-center gap-2 w-14">
                 <span className="text-xs text-muted-foreground font-medium">{item.hour}</span>
-                <span className="text-lg" aria-hidden>{item.icon}</span>
+                <WeatherIcon condition={item.condition} size={24} />
                 <div className="flex flex-col items-center justify-end h-14">
                   <div
                     className="w-1 rounded-full bg-primary opacity-70"
