@@ -77,8 +77,6 @@ export async function fetchWeather(
 
     const data = await res.json();
 
-    console.log(data);
-
     // Current weather
     const { condition, description } = mapWmoCode(data.current.weather_code);
     const sunriseTime = data.daily.sunrise[0].split("T")[1].slice(0, 5);

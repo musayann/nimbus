@@ -20,8 +20,8 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
   const containerRef = useRef<HTMLDivElement>(null)
 
   const filterResults = useCallback(() => {
-    if (query.trim().length < 2) {
-      setSuggestions([])
+    if (query.trim().length === 0) {
+      setSuggestions(cityDatabase.map((c) => ({ city: c.city, country: c.country })))
       return
     }
     const lower = query.toLowerCase()
@@ -72,7 +72,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
   const showDropdown = isFocused && suggestions.length > 0
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative w-full z-50">
       <form onSubmit={handleSubmit}>
         <div
           className={cn(
@@ -122,7 +122,7 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
       </form>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-2 glass rounded-2xl overflow-hidden z-50 shadow-xl">
+        <div className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-2xl overflow-hidden z-50 shadow-xl">
           {suggestions.map((s, i) => (
             <button
               key={i}

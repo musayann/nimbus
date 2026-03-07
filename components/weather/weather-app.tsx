@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { SearchBar } from './search-bar'
 import { CurrentWeatherCard } from './current-weather-card'
 import { ForecastCard } from './forecast-card'
@@ -35,6 +35,7 @@ export function WeatherApp() {
   const [hourly, setHourly] = useState<HourlyItem[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
+  const initializedRef = useRef(false)
 
   const loadCity = useCallback(async (city: string, country: string) => {
     setIsLoading(true)
@@ -109,7 +110,10 @@ export function WeatherApp() {
   }, [])
 
   useEffect(() => {
-    loadCity('Kigali', 'Rwanda')
+    if (!initializedRef.current) {
+      initializedRef.current = true
+      loadCity('Kigali', 'Rwanda')
+    }
   }, [loadCity])
 
   return (
@@ -156,7 +160,7 @@ export function WeatherApp() {
       </header>
 
       {/* Main content */}
-      <main className="relative z-10 flex-1 px-4 pb-8 md:px-8">
+      <main className="relative z-0 flex-1 px-4 pb-8 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           <CurrentWeatherCard weather={current} isLoading={isLoading} />
           <HourlyForecast data={hourly} isLoading={isLoading} />
