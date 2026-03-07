@@ -35,7 +35,7 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
           icon={<CloudRain className="w-4 h-4" />}
           label="Precipitation"
           value={`${precipitation.toFixed(1)} mm`}
-          sub="last hour"
+          sub="Last hour"
         />
         <DetailTile
           icon={<Thermometer className="w-4 h-4" />}
@@ -47,7 +47,7 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
           icon={<Droplets className="w-4 h-4" />}
           label="Humidity"
           value={`${humidity}%`}
-          sub="relative"
+          sub="Relative"
           bar
           barValue={humidity}
           barMax={100}
