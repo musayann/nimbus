@@ -2,6 +2,82 @@
 
 import { type GeoResult } from "@/lib/geo";
 
+interface RawResult {
+  name: string;
+  admin1?: string;
+  admin2?: string;
+  admin3?: string;
+  admin4?: string;
+  country?: string;
+  country_code?: string;
+  feature_code?: string;
+  latitude: number;
+  longitude: number;
+}
+
+function normalizeNames(results: RawResult[]): RawResult[] {
+  return results.map((r) => {
+    const admin2 = r.admin2?.replace("District", "").trim();
+    const matchesAdmin = [r.admin1, r.admin2, r.admin3, r.admin4].some(
+      (a) => a?.toLowerCase() === r.name.toLowerCase(),
+    );
+    return {
+      ...r,
+      name: matchesAdmin ? r.name : (admin2 ?? r.name),
+      admin2,
+    };
+  });
+}
+
+function filterByCountry(results: RawResult[], code: string): RawResult[] {
+  return results.filter(
+    (r) => r.country_code?.toUpperCase() === code.toUpperCase(),
+  );
+}
+
+const FEATURE_CODE_PRIORITY: Record<string, number> = { PPLC: 0, PPL: 1 };
+
+function deduplicateByFeatureCode(results: GeoResult[]): GeoResult[] {
+  const bestByName = new Map<string, { index: number; result: GeoResult }>();
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    const key = r.name.toLowerCase();
+    const existing = bestByName.get(key);
+    const priority = FEATURE_CODE_PRIORITY[r.feature_code ?? ""] ?? 2;
+    if (
+      !existing ||
+      priority <
+        (FEATURE_CODE_PRIORITY[existing.result.feature_code ?? ""] ?? 2)
+    ) {
+      bestByName.set(key, { index: existing?.index ?? i, result: r });
+    }
+  }
+  return [...bestByName.values()]
+    .sort((a, b) => a.index - b.index)
+    .map((v) => v.result);
+}
+
+function resolveRegion(r: RawResult): GeoResult {
+  const n = r.name.toLowerCase();
+  let region: string | undefined;
+  if (r.admin3?.toLowerCase() === n || r.admin4?.toLowerCase() === n) {
+    region = r.admin2;
+  } else if (r.admin2?.toLowerCase() === n) {
+    region = r.admin1;
+  }
+  if (region?.toLowerCase() === n) {
+    region = r.admin1;
+  }
+  return {
+    name: r.name,
+    region,
+    feature_code: r.feature_code,
+    country: r.country ?? "Rwanda",
+    lat: r.latitude,
+    lon: r.longitude,
+  };
+}
+
 export async function searchCities(query: string): Promise<GeoResult[]> {
   if (!query.trim()) return [];
   try {
@@ -16,53 +92,13 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     );
     if (!res.ok) return [];
     const data = await res.json();
-
     if (!data.results) return [];
 
-    interface RawResult {
-      name: string;
-      admin1?: string;
-      admin2?: string;
-      admin3?: string;
-      admin4?: string;
-      country?: string;
-      country_code?: string;
-      latitude: number;
-      longitude: number;
-    }
-    const results = data.results.map((r: RawResult) => {
-      const admin2 = r.admin2?.replace("District", "").trim();
-      if (
-        ![r.admin1, r.admin2, r.admin3, r.admin4].some(
-          (a) => a?.toLowerCase() === r.name.toLowerCase(),
-        )
-      ) {
-        r.name = admin2 ?? r.name;
-      }
-      return {
-        ...r,
-        admin2: admin2,
-      };
-    });
-    console.log(results);
-    return results
-      .filter((r: RawResult) => r.country_code?.toUpperCase() === "RW")
-      .map((r: RawResult) => {
-        const n = r.name.toLowerCase();
-        let region: string | undefined;
-        if (r.admin3?.toLowerCase() === n || r.admin4?.toLowerCase() === n) {
-          region = r.admin2;
-        } else if (r.admin2?.toLowerCase() === n) {
-          region = r.admin1;
-        }
-        return {
-          name: r.name,
-          region,
-          country: r.country ?? "Rwanda",
-          lat: r.latitude,
-          lon: r.longitude,
-        };
-      });
+    const normalized = normalizeNames(data.results);
+    const filtered = filterByCountry(normalized, "RW");
+    const results =  filtered.map(resolveRegion);
+    const deduplicated = deduplicateByFeatureCode(results);
+    return deduplicated;
   } catch {
     return [];
   }
