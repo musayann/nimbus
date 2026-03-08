@@ -17,7 +17,7 @@ export default function PrivacyPage() {
 
   return (
     <div className="min-h-screen sky-gradient">
-      <div className="max-w-2xl mx-auto px-4 py-8 md:px-8">
+      <div className="max-w-2xl mx-auto px-4 py-8 md:px-8 content-wrapper">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"

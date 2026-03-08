@@ -119,27 +119,7 @@ export function WeatherApp() {
   }, [current, loadCity, loadDefault])
 
   return (
-    <div className="min-h-screen sky-gradient flex flex-col">
-      {/* Background decorative blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden>
-        <div
-          className="absolute w-150 h-150 rounded-full opacity-20"
-          style={{
-            background: 'radial-gradient(circle, oklch(0.65 0.18 215), transparent 70%)',
-            top: '-15%',
-            right: '-15%',
-          }}
-        />
-        <div
-          className="absolute w-100 h-100 rounded-full opacity-10"
-          style={{
-            background: 'radial-gradient(circle, oklch(0.72 0.15 190), transparent 70%)',
-            bottom: '10%',
-            left: '-10%',
-          }}
-        />
-      </div>
-
+    <div className="flex flex-col">
       {/* Header */}
       <header className="relative z-10 px-4 pt-6 pb-4 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
