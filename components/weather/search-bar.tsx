@@ -10,39 +10,32 @@ interface SearchBarProps {
   onSearch: (city: string, country: string, lat: number, lon: number, region?: string) => void
   onUseLocation: () => void
   isLocating: boolean
-  currentCity: string
 }
 
-export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: SearchBarProps) {
+export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<GeoResult[]>([])
   const [isFocused, setIsFocused] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
-  const [searchError, setSearchError] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!query.trim()) {
       setSuggestions([])
-      setSearchError(false)
       setIsSearching(false)
       return
     }
     setIsSearching(true)
-    setSearchError(false)
     debounceRef.current = setTimeout(async () => {
-      try {
-        const results = await searchCities(query)
+      const id = ++requestIdRef.current
+      const results = await searchCities(query)
+      if (id === requestIdRef.current) {
         setSuggestions(results)
-        setSearchError(false)
-      } catch {
-        setSuggestions([])
-        setSearchError(true)
-      } finally {
         setIsSearching(false)
       }
     }, 300)
@@ -104,8 +97,8 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
     }
   }
 
-  const showDropdown = isFocused && (suggestions.length > 0 || (query.trim() && !isSearching && !searchError))
-  const showNoResults = isFocused && query.trim() && !isSearching && !searchError && suggestions.length === 0
+  const showDropdown = isFocused && (suggestions.length > 0 || (query.trim() && !isSearching))
+  const showNoResults = isFocused && query.trim() && !isSearching && suggestions.length === 0
 
   return (
     <div ref={containerRef} className="relative w-full z-50">
@@ -167,11 +160,9 @@ export function SearchBar({ onSearch, onUseLocation, isLocating, currentCity }: 
         </div>
       </form>
 
-      {(showDropdown || showNoResults || searchError) && (
+      {(showDropdown || showNoResults) && (
         <div id="suggestion-list" role="listbox" className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-2xl overflow-hidden z-50 shadow-xl">
-          {searchError ? (
-            <div className="px-4 py-3 text-sm text-muted-foreground">Search failed. Please try again.</div>
-          ) : showNoResults ? (
+          {showNoResults ? (
             <div className="px-4 py-3 text-sm text-muted-foreground">No results found</div>
           ) : (
             suggestions.map((s, i) => (

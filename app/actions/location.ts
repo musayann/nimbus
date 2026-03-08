@@ -103,16 +103,17 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
       format: "json",
     });
     const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?${params}&&countryCode=RW`,
+      `https://geocoding-api.open-meteo.com/v1/search?${params}&&countryCode=RW`, // Keep the location filter from the api otherwise the 6 results will not be relevant for us
     );
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.results) return [];
     const normalized = normalizeNames(data.results);
-    const filtered = filterByCountry(normalized, "RW");
+    const filtered = filterByCountry(normalized, "RW"); // We are doing this to double check sometimes the api doesn't just return relevant results
     const results = filtered.map(resolveRegion);
     const deduplicated = deduplicateByFeatureCode(results);
     const ranked = rankByRelevance(deduplicated, query.trim());
+    console.log(ranked);
     return ranked;
   } catch {
     return [];

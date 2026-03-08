@@ -14,7 +14,7 @@ import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
 
-const KIGALI = { city: 'Kigali', country: 'Rwanda', lat: -1.9525, lon: 30.115 }
+const DEFAULT_LOCATION = { name: 'Kigali', feature_code: 'PPLC', country: 'Rwanda', lat: -1.94995, lon: 30.05885 }
 
 export function WeatherApp() {
   const [current, setCurrent] = useState<CurrentWeather | null>(null)
@@ -47,6 +47,10 @@ export function WeatherApp() {
     setIsLoading(false)
   }, [])
 
+  const loadDefault = useCallback(() => {
+    loadCity(DEFAULT_LOCATION.name, DEFAULT_LOCATION.country, DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon)
+  }, [loadCity])
+
   const handleUseLocation = useCallback(() => {
     if (!navigator.geolocation) {
       toast.error('Geolocation is not supported by your browser')
@@ -58,10 +62,10 @@ export function WeatherApp() {
         const { latitude, longitude } = position.coords
         const geo = await reverseGeocode(latitude, longitude)
 
-        const city = geo?.name ?? KIGALI.city
-        const country = geo?.country ?? KIGALI.country
-        const lat = geo?.lat ?? KIGALI.lat
-        const lon = geo?.lon ?? KIGALI.lon
+        const city = geo?.name ?? DEFAULT_LOCATION.name
+        const country = geo?.country ?? DEFAULT_LOCATION.country
+        const lat = geo?.lat ?? DEFAULT_LOCATION.lat
+        const lon = geo?.lon ?? DEFAULT_LOCATION.lon
 
         await loadCity(city, country, lat, lon)
         setIsLocating(false)
@@ -80,16 +84,16 @@ export function WeatherApp() {
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true
-      loadCity(KIGALI.city, KIGALI.country, KIGALI.lat, KIGALI.lon)
+      loadDefault()
     }
-  }, [loadCity])
+  }, [loadDefault])
 
   return (
     <div className="min-h-screen sky-gradient flex flex-col">
       {/* Background decorative blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden>
         <div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-20"
+          className="absolute w-150 h-150 rounded-full opacity-20"
           style={{
             background: 'radial-gradient(circle, oklch(0.65 0.18 215), transparent 70%)',
             top: '-15%',
@@ -97,7 +101,7 @@ export function WeatherApp() {
           }}
         />
         <div
-          className="absolute w-[400px] h-[400px] rounded-full opacity-10"
+          className="absolute w-100 h-100 rounded-full opacity-10"
           style={{
             background: 'radial-gradient(circle, oklch(0.72 0.15 190), transparent 70%)',
             bottom: '10%',
@@ -131,7 +135,6 @@ export function WeatherApp() {
             onSearch={loadCity}
             onUseLocation={handleUseLocation}
             isLocating={isLocating}
-            currentCity={current?.city ?? KIGALI.city}
           />
         </div>
       </header>
@@ -143,7 +146,7 @@ export function WeatherApp() {
             <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-3">
               <p className="text-sm text-muted-foreground">{error}</p>
               <button
-                onClick={() => loadCity(KIGALI.city, KIGALI.country, KIGALI.lat, KIGALI.lon)}
+                onClick={loadDefault}
                 className="text-sm font-medium text-primary hover:text-accent transition-colors"
               >
                 Retry

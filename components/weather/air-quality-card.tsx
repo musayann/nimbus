@@ -41,7 +41,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
 
   if (!airQuality) return null
 
-  const entry = airQuality ? getAqiEntry(airQuality.aqi) : null
+  const entry = getAqiEntry(airQuality.aqi)
 
   return (
     <div className="glass rounded-3xl p-6 flex flex-col gap-5">
@@ -49,8 +49,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      {airQuality && entry && (
-        <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
+      <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Wind className="w-4 h-4 text-muted-foreground" />
@@ -102,7 +101,6 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
             <div className="text-[10px] text-muted-foreground text-right">All values in µg/m³</div>
           </div>
         </div>
-      )}
     </div>
   )
 }
