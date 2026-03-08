@@ -29,21 +29,17 @@ function aqiPercent(aqi: number): number {
 
 export function AirQualityCard({ coordinates }: AirQualityCardProps) {
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null)
-  const [unavailable, setUnavailable] = useState(false)
 
   useEffect(() => {
     setAirQuality(null)
-    setUnavailable(false)
     fetchAirQuality(coordinates).then((data) => {
       if (data) {
         setAirQuality(data)
-      } else {
-        setUnavailable(true)
       }
     })
-  }, [coordinates.lat, coordinates.lon])
+  }, [coordinates, coordinates.lat, coordinates.lon])
 
-  if (!airQuality && !unavailable) return null
+  if (!airQuality) return null
 
   const entry = airQuality ? getAqiEntry(airQuality.aqi) : null
 
@@ -53,9 +49,7 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      {unavailable ? (
-        <p className="text-sm text-muted-foreground">Air quality data is currently unavailable.</p>
-      ) : airQuality && entry && (
+      {airQuality && entry && (
         <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
