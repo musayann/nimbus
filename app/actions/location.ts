@@ -113,7 +113,6 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     const results = filtered.map(resolveRegion);
     const deduplicated = deduplicateByFeatureCode(results);
     const ranked = rankByRelevance(deduplicated, query.trim());
-    console.log(ranked);
     return ranked;
   } catch {
     return [];
