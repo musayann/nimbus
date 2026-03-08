@@ -1,26 +1,45 @@
 "use server";
 
-import { parseGeoResults, type GeoResult } from "@/lib/geo";
+import { type GeoResult } from "@/lib/geo";
 
 export async function searchCities(query: string): Promise<GeoResult[]> {
   if (!query.trim()) return [];
   try {
     const params = new URLSearchParams({
-      q: query.trim(),
-      countrycodes: "RW",
+      name: query.trim(),
+      count: "6",
+      language: "en",
       format: "json",
-      limit: "6",
-      addressdetails: "1",
-      "accept-language": "en",
     });
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?${params}`,
-      { headers: { "User-Agent": "Igicu Weather App" } },
+      `https://geocoding-api.open-meteo.com/v1/search?${params}&&countryCode=RW`,
     );
     if (!res.ok) return [];
     const data = await res.json();
 
-    return parseGeoResults(data);
+    console.log(data);
+
+    if (!data.results) return [];
+    return data.results
+      .filter(
+        (r: { country_code?: string }) =>
+          r.country_code?.toUpperCase() === "RW",
+      )
+      .map(
+        (r: {
+          name: string;
+          admin1?: string;
+          country?: string;
+          latitude: number;
+          longitude: number;
+        }) => ({
+          name: r.name,
+          region: r.admin1,
+          country: r.country ?? "Rwanda",
+          lat: r.latitude,
+          lon: r.longitude,
+        }),
+      );
   } catch {
     return [];
   }
