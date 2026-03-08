@@ -35,13 +35,17 @@ function filterByCountry(results: RawResult[], code: string): RawResult[] {
   );
 }
 
-const FEATURE_CODE_PRIORITY: Record<string, number> = { PPLC: 0, PPL: 1 };
+const FEATURE_CODE_PRIORITY: Record<string, number> = {
+  PPLC: 0,
+  PPLX: 1,
+  PPL: 2,
+};
 
 function deduplicateByFeatureCode(results: GeoResult[]): GeoResult[] {
   const bestByName = new Map<string, { index: number; result: GeoResult }>();
   for (let i = 0; i < results.length; i++) {
     const r = results[i];
-    const key = r.name.toLowerCase();
+    const key = (r.name + "-" + (r.region ?? "")).toLowerCase();
     const existing = bestByName.get(key);
     const priority = FEATURE_CODE_PRIORITY[r.feature_code ?? ""] ?? 2;
     if (
