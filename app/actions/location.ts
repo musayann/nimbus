@@ -73,15 +73,15 @@ function rankByRelevance(results: GeoResult[], query: string): GeoResult[] {
 
 function resolveRegion(r: RawResult): GeoResult {
   const n = r.name.toLowerCase();
-  let region: string | undefined;
-  if (r.admin3?.toLowerCase() === n || r.admin4?.toLowerCase() === n) {
-    region = r.admin2;
-  } else if (r.admin2?.toLowerCase() === n) {
-    region = r.admin1;
-  }
-  if (region?.toLowerCase() === n) {
-    region = r.admin1;
-  }
+  const matchesName = (v?: string) => v?.toLowerCase() === n;
+  const nameIsAdmin =
+    matchesName(r.admin2) || matchesName(r.admin3) || matchesName(r.admin4);
+
+  const parts = nameIsAdmin
+    ? [r.admin2, r.admin1].filter((v) => v && !matchesName(v))
+    : [];
+  const region = parts.join(", ") || undefined;
+
   return {
     name: r.name,
     region,
