@@ -13,7 +13,7 @@ import { toast } from 'sonner'
 import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
-import { saveWeatherToCache, getLastCachedWeather } from '@/lib/weather-cache'
+import { saveWeatherToCache, getLastCachedWeather, getLastCachedCity } from '@/lib/weather-cache'
 
 const DEFAULT_LOCATION = { name: 'Kigali', feature_code: 'PPLC', country: 'Rwanda', lat: -1.94995, lon: 30.05885 }
 
@@ -97,9 +97,14 @@ export function WeatherApp() {
           return
         }
       }
-      loadDefault()
+      const lastCity = getLastCachedCity()
+      if (lastCity) {
+        loadCity(lastCity.name, lastCity.country, lastCity.lat, lastCity.lon, lastCity.region)
+      } else {
+        loadDefault()
+      }
     }
-  }, [loadDefault])
+  }, [loadCity, loadDefault])
 
   useEffect(() => {
     const handleOnline = () => {

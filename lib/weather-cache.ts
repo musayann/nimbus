@@ -41,6 +41,17 @@ export function loadWeatherFromCache(
   }
 }
 
+export function getLastCachedCity(): { name: string; country: string; lat: number; lon: number; region?: string } | null {
+  try {
+    const cached = getLastCachedWeather()
+    if (!cached) return null
+    const { city, country, coordinates, region } = cached.current
+    return { name: city, country, lat: coordinates.lat, lon: coordinates.lon, region }
+  } catch {
+    return null
+  }
+}
+
 export function getLastCachedWeather(): CachedWeatherData | null {
   try {
     const coordsRaw = localStorage.getItem(LAST_KEY)
