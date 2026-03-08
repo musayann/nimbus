@@ -79,7 +79,8 @@ function resolveRegion(r: RawResult): GeoResult {
 
   const parts = nameIsAdmin
     ? [r.admin2, r.admin1].filter((v) => v && !matchesName(v))
-    : [];
+    : [r.admin1].filter((v) => v && !matchesName(v));
+
   const region = parts.join(", ") || undefined;
 
   return {
@@ -107,10 +108,9 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.results) return [];
-
     const normalized = normalizeNames(data.results);
     const filtered = filterByCountry(normalized, "RW");
-    const results =  filtered.map(resolveRegion);
+    const results = filtered.map(resolveRegion);
     const deduplicated = deduplicateByFeatureCode(results);
     const ranked = rankByRelevance(deduplicated, query.trim());
     return ranked;
