@@ -8,14 +8,20 @@ export type WeatherCondition =
   | 'windy'
   | 'snow'
 
-export type AirQualityLevel = 'Good' | 'Moderate' | 'Unhealthy for Sensitive Groups' | 'Unhealthy' | 'Very Unhealthy' | 'Hazardous'
+export type AirQualityLevel =
+  | 'Good'
+  | 'Moderate'
+  | 'Unhealthy for Sensitive Groups'
+  | 'Unhealthy'
+  | 'Very Unhealthy'
+  | 'Hazardous'
 
 export interface AirQuality {
   aqi: number // 0–500 AQI scale
   level: AirQualityLevel
   pm25: number // µg/m³
   pm10: number // µg/m³
-  o3: number  // µg/m³
+  o3: number // µg/m³
   no2: number // µg/m³
 }
 

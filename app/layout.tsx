@@ -59,7 +59,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-RW" className={inter.variable} suppressHydrationWarning>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      />
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ThemeColorMeta />

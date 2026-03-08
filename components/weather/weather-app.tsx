@@ -13,9 +13,19 @@ import { toast } from 'sonner'
 import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
-import { saveWeatherToCache, getLastCachedWeather, getLastCachedCity } from '@/lib/weather-cache'
+import {
+  saveWeatherToCache,
+  getLastCachedWeather,
+  getLastCachedCity,
+} from '@/lib/weather-cache'
 
-const DEFAULT_LOCATION = { name: 'Kigali', feature_code: 'PPLC', country: 'Rwanda', lat: -1.94995, lon: 30.05885 }
+const DEFAULT_LOCATION = {
+  name: 'Kigali',
+  feature_code: 'PPLC',
+  country: 'Rwanda',
+  lat: -1.94995,
+  lon: 30.05885,
+}
 
 export function WeatherApp() {
   const [current, setCurrent] = useState<CurrentWeather | null>(null)
@@ -27,31 +37,45 @@ export function WeatherApp() {
   const initializedRef = useRef(false)
   const { resolvedTheme, setTheme } = useTheme()
 
-  const loadCity = useCallback(async (city: string, country: string, lat: number, lon: number, region?: string) => {
-    setIsLoading(true)
-    setError(null)
-    const result = await fetchWeather(lat, lon)
-    if (result) {
-      const currentData: CurrentWeather = {
-        ...result.current,
-        city,
-        region,
-        country,
-        coordinates: { lat, lon },
+  const loadCity = useCallback(
+    async (
+      city: string,
+      country: string,
+      lat: number,
+      lon: number,
+      region?: string
+    ) => {
+      setIsLoading(true)
+      setError(null)
+      const result = await fetchWeather(lat, lon)
+      if (result) {
+        const currentData: CurrentWeather = {
+          ...result.current,
+          city,
+          region,
+          country,
+          coordinates: { lat, lon },
+        }
+        setCurrent(currentData)
+        setForecast(result.forecast)
+        setHourly(result.hourly)
+        saveWeatherToCache(currentData, result.forecast, result.hourly)
+      } else {
+        setError('Could not load weather data. Please try again.')
+        toast.error('Failed to load weather data')
       }
-      setCurrent(currentData)
-      setForecast(result.forecast)
-      setHourly(result.hourly)
-      saveWeatherToCache(currentData, result.forecast, result.hourly)
-    } else {
-      setError('Could not load weather data. Please try again.')
-      toast.error('Failed to load weather data')
-    }
-    setIsLoading(false)
-  }, [])
+      setIsLoading(false)
+    },
+    []
+  )
 
   const loadDefault = useCallback(() => {
-    loadCity(DEFAULT_LOCATION.name, DEFAULT_LOCATION.country, DEFAULT_LOCATION.lat, DEFAULT_LOCATION.lon)
+    loadCity(
+      DEFAULT_LOCATION.name,
+      DEFAULT_LOCATION.country,
+      DEFAULT_LOCATION.lat,
+      DEFAULT_LOCATION.lon
+    )
   }, [loadCity])
 
   const handleUseLocation = useCallback(() => {
@@ -75,9 +99,10 @@ export function WeatherApp() {
       },
       (err) => {
         setIsLocating(false)
-        const message = err.code === err.PERMISSION_DENIED
-          ? 'Location access denied. Please enable location permissions.'
-          : 'Could not determine your location. Please try again.'
+        const message =
+          err.code === err.PERMISSION_DENIED
+            ? 'Location access denied. Please enable location permissions.'
+            : 'Could not determine your location. Please try again.'
         toast.error(message)
       },
       { timeout: 8000 }
@@ -99,7 +124,13 @@ export function WeatherApp() {
       }
       const lastCity = getLastCachedCity()
       if (lastCity) {
-        loadCity(lastCity.name, lastCity.country, lastCity.lat, lastCity.lon, lastCity.region)
+        loadCity(
+          lastCity.name,
+          lastCity.country,
+          lastCity.lat,
+          lastCity.lon,
+          lastCity.region
+        )
       } else {
         loadDefault()
       }
@@ -109,7 +140,13 @@ export function WeatherApp() {
   useEffect(() => {
     const handleOnline = () => {
       if (current) {
-        loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon, current.region)
+        loadCity(
+          current.city,
+          current.country,
+          current.coordinates.lat,
+          current.coordinates.lon,
+          current.region
+        )
       } else {
         loadDefault()
       }
@@ -125,16 +162,30 @@ export function WeatherApp() {
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground tracking-tight">Igicu</h1>
-              <p className="text-xs text-muted-foreground">Live weather for Rwanda</p>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">
+                Igicu
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                Live weather for Rwanda
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-                aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                onClick={() =>
+                  setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+                }
+                aria-label={
+                  resolvedTheme === 'dark'
+                    ? 'Switch to light mode'
+                    : 'Switch to dark mode'
+                }
                 className="glass rounded-xl p-2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {resolvedTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                {resolvedTheme === 'dark' ? (
+                  <Sun size={16} />
+                ) : (
+                  <Moon size={16} />
+                )}
               </button>
               <div className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium">
                 Metric · °C
@@ -165,7 +216,19 @@ export function WeatherApp() {
           )}
           {current && (
             <>
-              <CurrentWeatherCard weather={current} isLoading={isLoading} onSync={() => loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon, current.region)} />
+              <CurrentWeatherCard
+                weather={current}
+                isLoading={isLoading}
+                onSync={() =>
+                  loadCity(
+                    current.city,
+                    current.country,
+                    current.coordinates.lat,
+                    current.coordinates.lon,
+                    current.region
+                  )
+                }
+              />
               <HourlyForecast data={hourly} isLoading={isLoading} />
               <AirQualityCard coordinates={current.coordinates} />
               <WeatherDetailsCard weather={current} isLoading={isLoading} />
@@ -182,11 +245,46 @@ export function WeatherApp() {
       <footer className="relative z-10 px-4 pb-6 pt-2 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col items-center gap-1.5 text-[11px] text-muted-foreground/70">
           <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
-            <span>Weather data by{' '}<a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">Open-Meteo</a></span>
-            <span>Geocoding by{' '}<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">OpenStreetMap</a></span>
-            <span>Air quality by{' '}<a href="https://www.rema.gov.rw" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground transition-colors">REMA Rwanda</a></span>
+            <span>
+              Weather data by{' '}
+              <a
+                href="https://open-meteo.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                Open-Meteo
+              </a>
+            </span>
+            <span>
+              Geocoding by{' '}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                OpenStreetMap
+              </a>
+            </span>
+            <span>
+              Air quality by{' '}
+              <a
+                href="https://www.rema.gov.rw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                REMA Rwanda
+              </a>
+            </span>
           </div>
-          <a href="/privacy" className="underline underline-offset-2 hover:text-foreground transition-colors">Privacy Policy</a>
+          <a
+            href="/privacy"
+            className="underline underline-offset-2 hover:text-foreground transition-colors"
+          >
+            Privacy Policy
+          </a>
         </div>
       </footer>
     </div>

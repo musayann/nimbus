@@ -7,7 +7,10 @@ interface WeatherDetailsCardProps {
   isLoading?: boolean
 }
 
-export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardProps) {
+export function WeatherDetailsCard({
+  weather,
+  isLoading,
+}: WeatherDetailsCardProps) {
   if (isLoading) {
     return (
       <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
@@ -25,7 +28,7 @@ export function WeatherDetailsCard({ weather, isLoading }: WeatherDetailsCardPro
 
   return (
     <div className="glass rounded-3xl p-6 flex flex-col gap-5">
-     <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+      <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
         Atmospheric Details
       </h2>
 
@@ -73,17 +76,30 @@ interface DetailTileProps {
   barMax?: number
 }
 
-function DetailTile({ icon, label, value, sub, bar, barValue = 0, barMax = 100 }: DetailTileProps) {
+function DetailTile({
+  icon,
+  label,
+  value,
+  sub,
+  bar,
+  barValue = 0,
+  barMax = 100,
+}: DetailTileProps) {
   return (
     <div className="weather-tile rounded-2xl px-4 py-3.5 flex flex-col gap-2">
       <div className="flex items-center gap-1.5 text-muted-foreground">
         {icon}
         <span className="text-xs">{label}</span>
       </div>
-      <span className="text-xl font-bold text-foreground leading-none">{value}</span>
+      <span className="text-xl font-bold text-foreground leading-none">
+        {value}
+      </span>
       {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
       {bar && (
-        <div className="h-1.5 rounded-full overflow-hidden mt-0.5" style={{ background: 'var(--weather-progress-track)' }}>
+        <div
+          className="h-1.5 rounded-full overflow-hidden mt-0.5"
+          style={{ background: 'var(--weather-progress-track)' }}
+        >
           <div
             className="h-full rounded-full bg-primary transition-all duration-700"
             style={{ width: `${(barValue / barMax) * 100}%` }}

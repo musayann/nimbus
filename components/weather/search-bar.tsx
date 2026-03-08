@@ -7,12 +7,22 @@ import { cn } from '@/lib/utils'
 import { GeoResult } from '@/lib/geo'
 
 interface SearchBarProps {
-  onSearch: (city: string, country: string, lat: number, lon: number, region?: string) => void
+  onSearch: (
+    city: string,
+    country: string,
+    lat: number,
+    lon: number,
+    region?: string
+  ) => void
   onUseLocation: () => void
   isLocating: boolean
 }
 
-export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProps) {
+export function SearchBar({
+  onSearch,
+  onUseLocation,
+  isLocating,
+}: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState<GeoResult[]>([])
   const [isFocused, setIsFocused] = useState(false)
@@ -46,7 +56,10 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsFocused(false)
         setSuggestions([])
       }
@@ -97,8 +110,10 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
     }
   }
 
-  const showDropdown = isFocused && (suggestions.length > 0 || (query.trim() && !isSearching))
-  const showNoResults = isFocused && query.trim() && !isSearching && suggestions.length === 0
+  const showDropdown =
+    isFocused && (suggestions.length > 0 || (query.trim() && !isSearching))
+  const showNoResults =
+    isFocused && query.trim() && !isSearching && suggestions.length === 0
 
   return (
     <div ref={containerRef} className="relative w-full z-50">
@@ -125,7 +140,9 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
             className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm outline-none min-w-0"
             aria-label="Search for a city"
             aria-expanded={showDropdown || undefined}
-            aria-activedescendant={activeIndex >= 0 ? `suggestion-${activeIndex}` : undefined}
+            aria-activedescendant={
+              activeIndex >= 0 ? `suggestion-${activeIndex}` : undefined
+            }
             role="combobox"
             aria-controls="suggestion-list"
             aria-autocomplete="list"
@@ -134,7 +151,10 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
           {query && (
             <button
               type="button"
-              onClick={() => { setQuery(''); setSuggestions([]) }}
+              onClick={() => {
+                setQuery('')
+                setSuggestions([])
+              }}
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Clear search"
             >
@@ -154,16 +174,26 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
             )}
             aria-label="Use current location"
           >
-            <MapPin className={cn('w-3.5 h-3.5', isLocating && 'animate-pulse')} />
-            <span className="hidden sm:inline">{isLocating ? 'Locating...' : 'My Location'}</span>
+            <MapPin
+              className={cn('w-3.5 h-3.5', isLocating && 'animate-pulse')}
+            />
+            <span className="hidden sm:inline">
+              {isLocating ? 'Locating...' : 'My Location'}
+            </span>
           </button>
         </div>
       </form>
 
       {(showDropdown || showNoResults) && (
-        <div id="suggestion-list" role="listbox" className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-2xl overflow-hidden z-50 shadow-xl">
+        <div
+          id="suggestion-list"
+          role="listbox"
+          className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-2xl overflow-hidden z-50 shadow-xl"
+        >
           {showNoResults ? (
-            <div className="px-4 py-3 text-sm text-muted-foreground">No results found</div>
+            <div className="px-4 py-3 text-sm text-muted-foreground">
+              No results found
+            </div>
           ) : (
             suggestions.map((s, i) => (
               <button
@@ -180,8 +210,14 @@ export function SearchBar({ onSearch, onUseLocation, isLocating }: SearchBarProp
               >
                 <MapPin className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
                 <span className="text-sm text-foreground">{s.name}</span>
-                {s.region && <span className="text-xs text-muted-foreground">{s.region}</span>}
-                <span className="text-xs text-muted-foreground ml-auto">{s.country}</span>
+                {s.region && (
+                  <span className="text-xs text-muted-foreground">
+                    {s.region}
+                  </span>
+                )}
+                <span className="text-xs text-muted-foreground ml-auto">
+                  {s.country}
+                </span>
               </button>
             ))
           )}

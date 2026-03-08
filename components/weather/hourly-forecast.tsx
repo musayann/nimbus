@@ -18,7 +18,10 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
         </h2>
         <div className="flex gap-3">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-2 w-14 animate-pulse">
+            <div
+              key={i}
+              className="flex flex-col items-center gap-2 w-14 animate-pulse"
+            >
               <div className="h-3 w-10 bg-muted rounded" />
               <div className="h-5 w-5 bg-muted rounded-full" />
               <div className="h-14 w-1 bg-muted rounded-full" />
@@ -44,10 +47,13 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
       <div className="overflow-x-auto pb-2 -mx-2 px-2">
         <div className="flex gap-3 min-w-max">
           {data.map((item, i) => {
-            const barHeight = Math.round(((item.temp - minTemp) / range) * 40) + 12
+            const barHeight =
+              Math.round(((item.temp - minTemp) / range) * 40) + 12
             return (
               <div key={i} className="flex flex-col items-center gap-2 w-14">
-                <span className="text-xs text-muted-foreground font-medium">{item.hour}</span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {item.hour}
+                </span>
                 <WeatherIcon condition={item.condition} size={24} />
                 <div className="flex flex-col items-center justify-end h-14">
                   <div
@@ -56,7 +62,9 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
                     aria-hidden
                   />
                 </div>
-                <span className="text-sm font-semibold text-foreground">{item.temp}°</span>
+                <span className="text-sm font-semibold text-foreground">
+                  {item.temp}°
+                </span>
                 {item.precipitationProbability > 0 && (
                   <span className="flex items-center gap-0.5 text-[10px] text-blue-500 font-medium">
                     <Droplets className="w-3 h-3" />

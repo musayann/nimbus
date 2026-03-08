@@ -1,4 +1,8 @@
-import type { CurrentWeather, ForecastDay, HourlyItem } from '@/components/weather/types'
+import type {
+  CurrentWeather,
+  ForecastDay,
+  HourlyItem,
+} from '@/components/weather/types'
 
 interface CachedWeatherData {
   current: CurrentWeather
@@ -17,11 +21,16 @@ function cacheKey(lat: number, lon: number): string {
 export function saveWeatherToCache(
   current: CurrentWeather,
   forecast: ForecastDay[],
-  hourly: HourlyItem[],
+  hourly: HourlyItem[]
 ): void {
   try {
     const { lat, lon } = current.coordinates
-    const data: CachedWeatherData = { current, forecast, hourly, cachedAt: Date.now() }
+    const data: CachedWeatherData = {
+      current,
+      forecast,
+      hourly,
+      cachedAt: Date.now(),
+    }
     localStorage.setItem(cacheKey(lat, lon), JSON.stringify(data))
     localStorage.setItem(LAST_KEY, JSON.stringify({ lat, lon }))
   } catch {
@@ -31,7 +40,7 @@ export function saveWeatherToCache(
 
 export function loadWeatherFromCache(
   lat: number,
-  lon: number,
+  lon: number
 ): CachedWeatherData | null {
   try {
     const raw = localStorage.getItem(cacheKey(lat, lon))
@@ -41,12 +50,24 @@ export function loadWeatherFromCache(
   }
 }
 
-export function getLastCachedCity(): { name: string; country: string; lat: number; lon: number; region?: string } | null {
+export function getLastCachedCity(): {
+  name: string
+  country: string
+  lat: number
+  lon: number
+  region?: string
+} | null {
   try {
     const cached = getLastCachedWeather()
     if (!cached) return null
     const { city, country, coordinates, region } = cached.current
-    return { name: city, country, lat: coordinates.lat, lon: coordinates.lon, region }
+    return {
+      name: city,
+      country,
+      lat: coordinates.lat,
+      lon: coordinates.lon,
+      region,
+    }
   } catch {
     return null
   }

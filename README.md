@@ -49,20 +49,20 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Commands
 
-| Command      | Description          |
-| ------------ | -------------------- |
-| `pnpm dev`   | Start dev server     |
-| `pnpm build` | Production build     |
-| `pnpm lint`  | Run ESLint           |
+| Command      | Description             |
+| ------------ | ----------------------- |
+| `pnpm dev`   | Start dev server        |
+| `pnpm build` | Production build        |
+| `pnpm lint`  | Run ESLint              |
 | `pnpm start` | Start production server |
 
 ## APIs Used
 
-| API | Auth | Description |
-| --- | ---- | ----------- |
-| [Open-Meteo](https://open-meteo.com) | None (free) | Current weather, hourly & daily forecasts |
-| [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org) | None (free) | City search & reverse geocoding |
-| REMA Air Quality | None (public) | Rwanda government air quality monitoring |
+| API                                                            | Auth          | Description                               |
+| -------------------------------------------------------------- | ------------- | ----------------------------------------- |
+| [Open-Meteo](https://open-meteo.com)                           | None (free)   | Current weather, hourly & daily forecasts |
+| [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org) | None (free)   | City search & reverse geocoding           |
+| REMA Air Quality                                               | None (public) | Rwanda government air quality monitoring  |
 
 ## License
 
