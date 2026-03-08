@@ -17,29 +17,52 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     if (!res.ok) return [];
     const data = await res.json();
 
-    console.log(data);
-
     if (!data.results) return [];
-    return data.results
-      .filter(
-        (r: { country_code?: string }) =>
-          r.country_code?.toUpperCase() === "RW",
-      )
-      .map(
-        (r: {
-          name: string;
-          admin1?: string;
-          country?: string;
-          latitude: number;
-          longitude: number;
-        }) => ({
+
+    interface RawResult {
+      name: string;
+      admin1?: string;
+      admin2?: string;
+      admin3?: string;
+      admin4?: string;
+      country?: string;
+      country_code?: string;
+      latitude: number;
+      longitude: number;
+    }
+    const results = data.results.map((r: RawResult) => {
+      const admin2 = r.admin2?.replace("District", "").trim();
+      if (
+        ![r.admin1, r.admin2, r.admin3, r.admin4].some(
+          (a) => a?.toLowerCase() === r.name.toLowerCase(),
+        )
+      ) {
+        r.name = admin2 ?? r.name;
+      }
+      return {
+        ...r,
+        admin2: admin2,
+      };
+    });
+    console.log(results);
+    return results
+      .filter((r: RawResult) => r.country_code?.toUpperCase() === "RW")
+      .map((r: RawResult) => {
+        const n = r.name.toLowerCase();
+        let region: string | undefined;
+        if (r.admin3?.toLowerCase() === n || r.admin4?.toLowerCase() === n) {
+          region = r.admin2;
+        } else if (r.admin2?.toLowerCase() === n) {
+          region = r.admin1;
+        }
+        return {
           name: r.name,
-          region: r.admin1,
+          region,
           country: r.country ?? "Rwanda",
           lat: r.latitude,
           lon: r.longitude,
-        }),
-      );
+        };
+      });
   } catch {
     return [];
   }
