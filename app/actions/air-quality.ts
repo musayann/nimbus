@@ -6,7 +6,11 @@ import type {
   Coordinates,
 } from "@/components/weather/types";
 
+let cachedResponse: { data: REMAResponse; timestamp: number } | null = null;
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
 interface REMAReading {
+  aqi?: number;
   PM25?: number;
   PM10?: number;
   NO2?: number;
@@ -52,16 +56,26 @@ function levelFromAqi(aqi: number): AirQualityLevel {
   return "Hazardous";
 }
 
+async function getREMAData(): Promise<REMAResponse | null> {
+  if (cachedResponse && Date.now() - cachedResponse.timestamp < CACHE_TTL) {
+    return cachedResponse.data;
+  }
+
+  const res = await fetch("https://aq.rema.gov.rw/load_json");
+  if (!res.ok) return null;
+
+  const data: REMAResponse = await res.json();
+  cachedResponse = { data, timestamp: Date.now() };
+  return data;
+}
+
 export async function fetchAirQuality(
   coords: Coordinates,
 ): Promise<AirQuality | null> {
   try {
-    const res = await fetch("https://aq.rema.gov.rw/load_json", {
-      next: { revalidate: 300 },
-    } as RequestInit);
-    if (!res.ok) return null;
+    const json = await getREMAData();
+    if (!json) return null;
 
-    const json: REMAResponse = await res.json();
     const features = json.features;
     if (!features || features.length === 0) return null;
 
@@ -76,8 +90,9 @@ export async function fetchAirQuality(
         nearest = f;
       }
     }
-    const { aqi, data } = nearest.properties;
+    const { data } = nearest.properties;
     const latest = data[data.length - 1] ?? {};
+    const aqi = latest.aqi || 0;
 
     return {
       aqi,
