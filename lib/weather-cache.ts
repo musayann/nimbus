@@ -62,3 +62,18 @@ export function getLastCachedWeather(): CachedWeatherData | null {
     return null
   }
 }
+
+export function clearAllCachedData(): void {
+  try {
+    const keysToRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key?.startsWith('igicu-')) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach((key) => localStorage.removeItem(key))
+  } catch {
+    // localStorage unavailable — silently ignore
+  }
+}
