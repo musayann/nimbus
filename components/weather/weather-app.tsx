@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
+import { saveWeatherToCache, getLastCachedWeather } from '@/lib/weather-cache'
 
 const DEFAULT_LOCATION = { name: 'Kigali', feature_code: 'PPLC', country: 'Rwanda', lat: -1.94995, lon: 30.05885 }
 
@@ -31,15 +32,17 @@ export function WeatherApp() {
     setError(null)
     const result = await fetchWeather(lat, lon)
     if (result) {
-      setCurrent({
+      const currentData: CurrentWeather = {
         ...result.current,
         city,
         region,
         country,
         coordinates: { lat, lon },
-      })
+      }
+      setCurrent(currentData)
       setForecast(result.forecast)
       setHourly(result.hourly)
+      saveWeatherToCache(currentData, result.forecast, result.hourly)
     } else {
       setError('Could not load weather data. Please try again.')
       toast.error('Failed to load weather data')
@@ -84,9 +87,31 @@ export function WeatherApp() {
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true
+      if (!navigator.onLine) {
+        const cached = getLastCachedWeather()
+        if (cached) {
+          setCurrent(cached.current)
+          setForecast(cached.forecast)
+          setHourly(cached.hourly)
+          setIsLoading(false)
+          return
+        }
+      }
       loadDefault()
     }
   }, [loadDefault])
+
+  useEffect(() => {
+    const handleOnline = () => {
+      if (current) {
+        loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon, current.region)
+      } else {
+        loadDefault()
+      }
+    }
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [current, loadCity, loadDefault])
 
   return (
     <div className="min-h-screen sky-gradient flex flex-col">

@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     siteName: 'Igicu',
     locale: 'en_RW',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Igicu',
+  },
   icons: {
     icon: [
       {
