@@ -86,17 +86,20 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
               />
             </div>
           </div>
+          <div className="flex flex-col gap-y-1">
+            <div className="md:flex items-center justify-between gap-y-1">
+              <span className={cn('text-xs font-medium', entry.tailwind)}>
+                {airQuality.level}
+              </span>
+              <div className="flex mt-4 md:mt-0 flex-1 md:flex-none gap-3 justify-between text-xs text-muted-foreground">
+                <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span></span>
+                <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span></span>
+                <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span></span>
+                <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span></span>
+              </div>
 
-          <div className="md:flex items-center justify-between gap-y-1">
-            <span className={cn('text-xs font-medium', entry.tailwind)}>
-              {airQuality.level}
-            </span>
-            <div className="flex mt-4 md:mt-0 flex-1 md:flex-none gap-3 justify-between text-xs text-muted-foreground">
-              <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span> <span className="text-[10px]">µg/m³</span></span>
-              <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span> <span className="text-[10px]">µg/m³</span></span>
-              <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span> <span className="text-[10px]">µg/m³</span></span>
-              <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span> <span className="text-[10px]">µg/m³</span></span>
             </div>
+            <div className="text-[10px] text-muted-foreground text-right">All values in µg/m³</div>
           </div>
         </div>
       )}
