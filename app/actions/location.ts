@@ -57,6 +57,20 @@ function deduplicateByFeatureCode(results: GeoResult[]): GeoResult[] {
     .map((v) => v.result);
 }
 
+function rankByRelevance(results: GeoResult[], query: string): GeoResult[] {
+  const q = query.toLowerCase();
+  return results.toSorted((a, b) => {
+    const aName = a.name.toLowerCase();
+    const bName = b.name.toLowerCase();
+    const aScore = aName === q ? 0 : aName.startsWith(q) ? 1 : 2;
+    const bScore = bName === q ? 0 : bName.startsWith(q) ? 1 : 2;
+    if (aScore !== bScore) return aScore - bScore;
+    const aPriority = FEATURE_CODE_PRIORITY[a.feature_code ?? ""] ?? 2;
+    const bPriority = FEATURE_CODE_PRIORITY[b.feature_code ?? ""] ?? 2;
+    return aPriority - bPriority;
+  });
+}
+
 function resolveRegion(r: RawResult): GeoResult {
   const n = r.name.toLowerCase();
   let region: string | undefined;
@@ -98,7 +112,8 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     const filtered = filterByCountry(normalized, "RW");
     const results =  filtered.map(resolveRegion);
     const deduplicated = deduplicateByFeatureCode(results);
-    return deduplicated;
+    const ranked = rankByRelevance(deduplicated, query.trim());
+    return ranked;
   } catch {
     return [];
   }
