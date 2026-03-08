@@ -29,8 +29,22 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
       weather_code: [0, 2, 3, 45, 63, 95],
       temperature_2m_max: [24, 25, 22, 20, 18, 23],
       temperature_2m_min: [15, 16, 14, 13, 12, 14],
-      sunrise: ['2026-03-08T06:15', '2026-03-09T06:16', '2026-03-10T06:16', '2026-03-11T06:17', '2026-03-12T06:17', '2026-03-13T06:18'],
-      sunset: ['2026-03-08T18:20', '2026-03-09T18:19', '2026-03-10T18:19', '2026-03-11T18:18', '2026-03-12T18:18', '2026-03-13T18:17'],
+      sunrise: [
+        '2026-03-08T06:15',
+        '2026-03-09T06:16',
+        '2026-03-10T06:16',
+        '2026-03-11T06:17',
+        '2026-03-12T06:17',
+        '2026-03-13T06:18',
+      ],
+      sunset: [
+        '2026-03-08T18:20',
+        '2026-03-09T18:19',
+        '2026-03-10T18:19',
+        '2026-03-11T18:18',
+        '2026-03-12T18:18',
+        '2026-03-13T18:17',
+      ],
       uv_index_max: [8, 7, 5, 4, 3, 6],
       precipitation_sum: [0, 1, 2, 5, 10, 0],
       precipitation_probability_max: [10, 30, 50, 70, 90, 20],
@@ -63,17 +77,11 @@ function mockFetchOk(body: unknown) {
 }
 
 function mockFetchError() {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn().mockRejectedValue(new Error('network error'))
-  )
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
 }
 
 function mockFetchNotOk() {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn().mockResolvedValue({ ok: false })
-  )
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
 }
 
 afterEach(() => {

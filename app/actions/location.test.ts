@@ -147,10 +147,7 @@ describe('searchCities', () => {
   })
 
   it('returns empty array on non-ok response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false })
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
     const result = await searchCities('Kigali')
     expect(result).toEqual([])
   })
@@ -226,10 +223,7 @@ describe('reverseGeocode', () => {
   })
 
   it('returns null on non-ok response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false })
-    )
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
     const result = await reverseGeocode(-1.9403, 29.8739)
     expect(result).toBeNull()
   })

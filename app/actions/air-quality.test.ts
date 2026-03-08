@@ -96,10 +96,7 @@ describe('fetchAirQuality', () => {
     })
 
     it('returns null on non-ok response', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({ ok: false })
-      )
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
       const result = await fetchAirQuality({ lat: -1.9403, lon: 29.8739 })
       expect(result).toBeNull()
     })
