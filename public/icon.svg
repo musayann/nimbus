@@ -1,12 +1,15 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
   <style>
     @media (prefers-color-scheme: light) {
+      .bg { fill: #ffffff; }
       .cloud { fill: #1e293b; }
     }
     @media (prefers-color-scheme: dark) {
+      .bg { fill: #0b223e; }
       .cloud { fill: #2ba4c9; }
     }
   </style>
+  <rect class="bg" width="180" height="180"/>
   <path class="cloud" d="M32,112
   C16,112 16,88 32,88
   C20,68 44,52 68,52

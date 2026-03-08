@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "generate-icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
