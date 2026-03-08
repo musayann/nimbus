@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       'Live weather forecasts for cities across Rwanda. Current conditions, hourly updates, and 5-day forecasts.',
     start_url: '/',
     display: 'standalone',
-    theme_color: '#eff7fb',
-    background_color: '#000717',
+    theme_color: '#73d3f1',
+    background_color: '#00051f',
     icons: [
       {
         src: '/icon-192x192.png',
