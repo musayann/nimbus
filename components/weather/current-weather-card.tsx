@@ -2,8 +2,9 @@
 
 import { WeatherIcon } from './weather-icon'
 import type { CurrentWeather } from './types'
-import { MapPin, RefreshCw, Sunrise, Sunset, Gauge } from 'lucide-react'
+import { MapPin, Sunrise, Sunset, Gauge } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SyncButton } from './sync-button'
 
 interface CurrentWeatherCardProps {
   weather: CurrentWeather
@@ -39,16 +40,7 @@ export function CurrentWeatherCard({ weather, isLoading, onSync }: CurrentWeathe
             <span className="font-semibold text-foreground text-lg leading-tight">{weather.city}</span>
             {weather.region && <span className="text-muted-foreground text-sm">{weather.region}</span>}
           </div>
-          <button
-            type="button"
-            onClick={onSync}
-            disabled={isLoading}
-            className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
-            aria-label="Sync weather data"
-          >
-            <RefreshCw className={cn('w-3 h-3', isLoading && 'animate-spin')} />
-            {weather.lastUpdated}
-          </button>
+          <SyncButton timestamp={weather.lastUpdated} isLoading={isLoading} onSync={onSync} />
         </div>
 
         {/* Main temp + icon */}

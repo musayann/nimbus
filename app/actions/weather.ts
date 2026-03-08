@@ -94,7 +94,7 @@ export async function fetchWeather(
       sunset: sunsetTime,
       high: Math.round(data.daily.temperature_2m_max[0]),
       low: Math.round(data.daily.temperature_2m_min[0]),
-      lastUpdated: "Just now",
+      lastUpdated: Date.now(),
     };
 
     // Forecast (days 1-5)
