@@ -1,7 +1,5 @@
 'use server'
 
-import { type GeoResult } from '@/lib/geo'
-
 interface RawResult {
   name: string
   admin1?: string
