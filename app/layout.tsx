@@ -1,9 +1,11 @@
+import { ThemeColorMeta } from '@/components/theme-color-meta'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { THEME_COLORS } from '@/constants'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -45,8 +47,8 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#73d3f1' },
-    { media: '(prefers-color-scheme: dark)', color: '#00051f' },
+    { media: '(prefers-color-scheme: light)', color: THEME_COLORS.light },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLORS.dark },
   ],
 }
 
@@ -60,6 +62,7 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeColorMeta />
           {children}
           <Toaster />
           <Analytics />
