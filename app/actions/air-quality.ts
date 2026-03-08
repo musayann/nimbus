@@ -6,9 +6,6 @@ import type {
   Coordinates,
 } from "@/components/weather/types";
 
-let cachedResponse: { data: REMAResponse; timestamp: number } | null = null;
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
-
 interface REMAReading {
   aqi?: number;
   PM25?: number;
@@ -57,16 +54,11 @@ function levelFromAqi(aqi: number): AirQualityLevel {
 }
 
 async function getREMAData(): Promise<REMAResponse | null> {
-  if (cachedResponse && Date.now() - cachedResponse.timestamp < CACHE_TTL) {
-    return cachedResponse.data;
-  }
-
-  const res = await fetch("https://aq.rema.gov.rw/load_json");
+  const res = await fetch("https://aq.rema.gov.rw/load_json", {
+    next: { revalidate: 600 },
+  } as RequestInit);
   if (!res.ok) return null;
-
-  const data: REMAResponse = await res.json();
-  cachedResponse = { data, timestamp: Date.now() };
-  return data;
+  return res.json();
 }
 
 export async function fetchAirQuality(
@@ -103,7 +95,7 @@ export async function fetchAirQuality(
       no2: latest.NO2 ?? 0,
     };
   } catch (e) {
-    console.log(e);
+    console.error("fetchAirQuality failed:", e);
     return null;
   }
 }

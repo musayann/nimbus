@@ -1,5 +1,6 @@
 'use client'
 
+import { CloudOff } from 'lucide-react'
 import type { WeatherCondition } from './types'
 
 interface WeatherIconProps {
@@ -129,5 +130,6 @@ export function WeatherIcon({ condition, size = 64, animated = false, className 
     )
   }
 
-  return null
+  console.warn(`WeatherIcon: unmatched condition "${condition}"`)
+  return <CloudOff size={s} className={className} aria-label="Unknown weather" />
 }

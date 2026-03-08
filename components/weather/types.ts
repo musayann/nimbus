@@ -45,7 +45,7 @@ export interface CurrentWeather {
   sunset: string
   high: number
   low: number
-  lastUpdated: string
+  lastUpdated: number
 }
 
 export interface HourlyItem {

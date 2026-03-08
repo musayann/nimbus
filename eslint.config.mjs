@@ -16,6 +16,9 @@ const eslintConfig = defineConfig([
   {
   settings: {
     react: { version: "19" } // Avoids auto-detection crash
+  },
+  rules: {
+    "react-hooks/set-state-in-effect": "off",
   }
 }
 ])

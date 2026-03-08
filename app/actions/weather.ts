@@ -36,6 +36,13 @@ function degreesToCardinal(deg: number): string {
   return directions[index];
 }
 
+function parseTimeHHMM(isoString: string | undefined): string {
+  if (!isoString) return "--:--";
+  const tIndex = isoString.indexOf("T");
+  if (tIndex === -1) return "--:--";
+  return isoString.slice(tIndex + 1, tIndex + 6) || "--:--";
+}
+
 export async function fetchWeather(
   lat: number,
   lon: number,
@@ -67,8 +74,8 @@ export async function fetchWeather(
 
     // Current weather
     const { condition, description } = mapWmoCode(data.current.weather_code);
-    const sunriseTime = data.daily.sunrise[0].split("T")[1].slice(0, 5);
-    const sunsetTime = data.daily.sunset[0].split("T")[1].slice(0, 5);
+    const sunriseTime = parseTimeHHMM(data.daily.sunrise?.[0]);
+    const sunsetTime = parseTimeHHMM(data.daily.sunset?.[0]);
 
     const current: Omit<CurrentWeather, "city" | "country" | "coordinates"> = {
       temperature: Math.round(data.current.temperature_2m),
@@ -87,7 +94,7 @@ export async function fetchWeather(
       sunset: sunsetTime,
       high: Math.round(data.daily.temperature_2m_max[0]),
       low: Math.round(data.daily.temperature_2m_min[0]),
-      lastUpdated: "Just now",
+      lastUpdated: Date.now(),
     };
 
     // Forecast (days 1-5)
@@ -137,7 +144,8 @@ export async function fetchWeather(
     }
 
     return { current, forecast, hourly };
-  } catch {
+  } catch (e) {
+    console.error("fetchWeather failed:", e);
     return null;
   }
 }
