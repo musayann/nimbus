@@ -9,6 +9,7 @@ import { ForecastCard } from './forecast-card'
 import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
+import { toast } from 'sonner'
 import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
@@ -20,12 +21,14 @@ export function WeatherApp() {
   const [forecast, setForecast] = useState<ForecastDay[]>([])
   const [hourly, setHourly] = useState<HourlyItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const initializedRef = useRef(false)
   const { resolvedTheme, setTheme } = useTheme()
 
   const loadCity = useCallback(async (city: string, country: string, lat: number, lon: number, region?: string) => {
     setIsLoading(true)
+    setError(null)
     const result = await fetchWeather(lat, lon)
     if (result) {
       setCurrent({
@@ -37,43 +40,42 @@ export function WeatherApp() {
       })
       setForecast(result.forecast)
       setHourly(result.hourly)
+    } else {
+      setError('Could not load weather data. Please try again.')
+      toast.error('Failed to load weather data')
     }
     setIsLoading(false)
   }, [])
 
   const handleUseLocation = useCallback(() => {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser')
+      return
+    }
     setIsLocating(true)
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords
         const geo = await reverseGeocode(latitude, longitude)
 
-        // Use reverse-geocoded location if in Rwanda, otherwise default to Kigali
         const city = geo?.name ?? KIGALI.city
         const country = geo?.country ?? KIGALI.country
         const lat = geo?.lat ?? KIGALI.lat
         const lon = geo?.lon ?? KIGALI.lon
 
-        const result = await fetchWeather(lat, lon)
-        if (result) {
-          setCurrent({
-            ...result.current,
-            city,
-            country,
-            coordinates: { lat, lon },
-          })
-          setForecast(result.forecast)
-          setHourly(result.hourly)
-        }
+        await loadCity(city, country, lat, lon)
         setIsLocating(false)
       },
-      () => {
+      (err) => {
         setIsLocating(false)
+        const message = err.code === err.PERMISSION_DENIED
+          ? 'Location access denied. Please enable location permissions.'
+          : 'Could not determine your location. Please try again.'
+        toast.error(message)
       },
       { timeout: 8000 }
     )
-  }, [])
+  }, [loadCity])
 
   useEffect(() => {
     if (!initializedRef.current) {
@@ -137,6 +139,17 @@ export function WeatherApp() {
       {/* Main content */}
       <main className="relative z-0 flex-1 px-4 pb-8 md:px-8">
         <div className="max-w-2xl mx-auto flex flex-col gap-4">
+          {error && !current && (
+            <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-3">
+              <p className="text-sm text-muted-foreground">{error}</p>
+              <button
+                onClick={() => loadCity(KIGALI.city, KIGALI.country, KIGALI.lat, KIGALI.lon)}
+                className="text-sm font-medium text-primary hover:text-accent transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
           {current && (
             <>
               <CurrentWeatherCard weather={current} isLoading={isLoading} onSync={() => loadCity(current.city, current.country, current.coordinates.lat, current.coordinates.lon, current.region)} />
@@ -144,7 +157,6 @@ export function WeatherApp() {
               <AirQualityCard coordinates={current.coordinates} />
               <WeatherDetailsCard weather={current} isLoading={isLoading} />
               <ForecastCard forecast={forecast} isLoading={isLoading} />
-              {/* Footer note */}
               <p className="text-center text-xs text-muted-foreground pb-4">
                 Displaying metric measurements · km/h · °C · hPa
               </p>

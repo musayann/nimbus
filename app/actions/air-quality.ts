@@ -6,6 +6,8 @@ import type {
   Coordinates,
 } from "@/components/weather/types";
 
+// In-memory cache — effective in long-running Node servers but lost on serverless cold starts.
+// Consider unstable_cache / next.revalidate if consistent caching across invocations is needed.
 let cachedResponse: { data: REMAResponse; timestamp: number } | null = null;
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
@@ -103,7 +105,7 @@ export async function fetchAirQuality(
       no2: latest.NO2 ?? 0,
     };
   } catch (e) {
-    console.log(e);
+    console.error("fetchAirQuality failed:", e);
     return null;
   }
 }

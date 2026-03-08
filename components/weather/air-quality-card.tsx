@@ -10,22 +10,17 @@ interface AirQualityCardProps {
   coordinates: Coordinates
 }
 
-function getAqiColor(aqi: number): string {
-  if (aqi <= 50) return 'text-emerald-600 dark:text-emerald-400'
-  if (aqi <= 100) return 'text-yellow-600 dark:text-yellow-400'
-  if (aqi <= 150) return 'text-orange-600 dark:text-orange-400'
-  if (aqi <= 200) return 'text-red-600 dark:text-red-400'
-  if (aqi <= 300) return 'text-purple-600 dark:text-purple-400'
-  return 'text-rose-700 dark:text-rose-600'
-}
+const AQI_COLORS = [
+  { max: 50, tailwind: 'text-emerald-600 dark:text-emerald-400', hex: '#22c55e' },
+  { max: 100, tailwind: 'text-yellow-600 dark:text-yellow-400', hex: '#facc15' },
+  { max: 150, tailwind: 'text-orange-600 dark:text-orange-400', hex: '#f97316' },
+  { max: 200, tailwind: 'text-red-600 dark:text-red-400', hex: '#ef4444' },
+  { max: 300, tailwind: 'text-purple-600 dark:text-purple-400', hex: '#a855f7' },
+  { max: Infinity, tailwind: 'text-rose-700 dark:text-rose-600', hex: '#881337' },
+] as const
 
-function getAqiHex(aqi: number): string {
-  if (aqi <= 50) return '#22c55e'
-  if (aqi <= 100) return '#facc15'
-  if (aqi <= 150) return '#f97316'
-  if (aqi <= 200) return '#ef4444'
-  if (aqi <= 300) return '#a855f7'
-  return '#881337'
+function getAqiEntry(aqi: number) {
+  return AQI_COLORS.find((c) => aqi <= c.max)!
 }
 
 function aqiPercent(aqi: number): number {
@@ -34,13 +29,23 @@ function aqiPercent(aqi: number): number {
 
 export function AirQualityCard({ coordinates }: AirQualityCardProps) {
   const [airQuality, setAirQuality] = useState<AirQuality | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
 
   useEffect(() => {
     setAirQuality(null)
-    fetchAirQuality(coordinates).then(setAirQuality)
-  }, [coordinates, coordinates.lat, coordinates.lon])
+    setUnavailable(false)
+    fetchAirQuality(coordinates).then((data) => {
+      if (data) {
+        setAirQuality(data)
+      } else {
+        setUnavailable(true)
+      }
+    })
+  }, [coordinates.lat, coordinates.lon])
 
-  if (!airQuality) return null
+  if (!airQuality && !unavailable) return null
+
+  const entry = airQuality ? getAqiEntry(airQuality.aqi) : null
 
   return (
     <div className="glass rounded-3xl p-6 flex flex-col gap-5">
@@ -48,55 +53,59 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
         Air Quality
       </h2>
 
-      <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Wind className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Air Quality Index</span>
+      {unavailable ? (
+        <p className="text-sm text-muted-foreground">Air quality data is currently unavailable.</p>
+      ) : airQuality && entry && (
+        <div className="weather-tile rounded-2xl p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Wind className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Air Quality Index</span>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className={cn('text-2xl font-bold', entry.tailwind)}>
+                {airQuality.aqi}
+              </span>
+              <span className="text-xs text-muted-foreground">AQI</span>
+            </div>
           </div>
-          <div className="flex items-baseline gap-1.5">
-            <span className={cn('text-2xl font-bold', getAqiColor(airQuality.aqi))}>
-              {airQuality.aqi}
-            </span>
-            <span className="text-xs text-muted-foreground">AQI</span>
-          </div>
-        </div>
 
-        <div
-          className="relative h-2 rounded-full my-1"
-          role="progressbar"
-          aria-valuenow={airQuality.aqi}
-          aria-valuemin={0}
-          aria-valuemax={300}
-          aria-label={`Air quality index: ${airQuality.aqi}`}
-        >
           <div
-            className="absolute inset-0 rounded-full"
-            style={{ background: 'linear-gradient(to right, #22c55e, #facc15, #f97316, #ef4444, #a855f7, #881337)' }}
-          />
-          <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-all duration-700 z-10"
-            style={{ left: `${aqiPercent(airQuality.aqi)}%` }}
+            className="relative h-2 rounded-full my-1"
+            role="progressbar"
+            aria-valuenow={airQuality.aqi}
+            aria-valuemin={0}
+            aria-valuemax={300}
+            aria-label={`Air quality index: ${airQuality.aqi}`}
           >
             <div
-              className="w-4 h-4 rounded-full border-2 shadow-md border-black/75 dark:border-white/75"
-              style={{ backgroundColor: getAqiHex(airQuality.aqi)}}
+              className="absolute inset-0 rounded-full"
+              style={{ background: 'linear-gradient(to right, #22c55e, #facc15, #f97316, #ef4444, #a855f7, #881337)' }}
             />
+            <div
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-all duration-700 z-10"
+              style={{ left: `${aqiPercent(airQuality.aqi)}%` }}
+            >
+              <div
+                className="w-4 h-4 rounded-full border-2 shadow-md border-black/75 dark:border-white/75"
+                style={{ backgroundColor: entry.hex }}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="md:flex items-center justify-between gap-y-1">
-          <span className={cn('text-xs font-medium', getAqiColor(airQuality.aqi))}>
-            {airQuality.level}
-          </span>
-          <div className="flex mt-4 md:mt-0 flex-1 md:flex-none gap-3 justify-between text-xs text-muted-foreground">
-            <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span></span>
-            <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span></span>
-            <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span></span>
-            <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span></span>
+          <div className="md:flex items-center justify-between gap-y-1">
+            <span className={cn('text-xs font-medium', entry.tailwind)}>
+              {airQuality.level}
+            </span>
+            <div className="flex mt-4 md:mt-0 flex-1 md:flex-none gap-3 justify-between text-xs text-muted-foreground">
+              <span>PM2.5 <span className="text-foreground font-medium">{airQuality.pm25}</span> <span className="text-[10px]">µg/m³</span></span>
+              <span>PM10 <span className="text-foreground font-medium">{airQuality.pm10}</span> <span className="text-[10px]">µg/m³</span></span>
+              <span>O₃ <span className="text-foreground font-medium">{airQuality.o3}</span> <span className="text-[10px]">µg/m³</span></span>
+              <span>NO₂ <span className="text-foreground font-medium">{airQuality.no2}</span> <span className="text-[10px]">µg/m³</span></span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
