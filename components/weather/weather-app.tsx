@@ -10,7 +10,6 @@ import { HourlyForecast } from './hourly-forecast'
 import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
 import { toast } from 'sonner'
-import { fetchWeather } from '@/app/actions/weather'
 import { reverseGeocode } from '@/app/actions/location'
 import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
 import {
@@ -47,7 +46,8 @@ export function WeatherApp() {
     ) => {
       setIsLoading(true)
       setError(null)
-      const result = await fetchWeather(lat, lon)
+      const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`)
+      const result = res.ok ? await res.json() : null
       if (result) {
         const currentData: CurrentWeather = {
           ...result.current,

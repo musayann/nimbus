@@ -1,5 +1,4 @@
-'use server'
-
+import { NextResponse } from 'next/server'
 import type {
   WeatherCondition,
   CurrentWeather,
@@ -43,14 +42,28 @@ function parseTimeHHMM(isoString: string | undefined): string {
   return isoString.slice(tIndex + 1, tIndex + 6) || '--:--'
 }
 
-export async function fetchWeather(
-  lat: number,
-  lon: number
-): Promise<{
-  current: Omit<CurrentWeather, 'city' | 'country' | 'coordinates'>
-  forecast: ForecastDay[]
-  hourly: HourlyItem[]
-} | null> {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const latStr = searchParams.get('lat')
+  const lonStr = searchParams.get('lon')
+
+  if (!latStr || !lonStr) {
+    return NextResponse.json(
+      { error: 'Missing required query parameters: lat and lon' },
+      { status: 400 }
+    )
+  }
+
+  const lat = Number(latStr)
+  const lon = Number(lonStr)
+
+  if (Number.isNaN(lat) || Number.isNaN(lon)) {
+    return NextResponse.json(
+      { error: 'lat and lon must be valid numbers' },
+      { status: 400 }
+    )
+  }
+
   try {
     const params = new URLSearchParams({
       latitude: lat.toString(),
@@ -64,11 +77,13 @@ export async function fetchWeather(
         'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,relative_humidity_2m_max',
     })
 
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?${params}`,
-      { next: { revalidate: 600 } } as RequestInit
-    )
-    if (!res.ok) return null
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`)
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: 'Failed to fetch weather data from upstream' },
+        { status: 500 }
+      )
+    }
 
     const data = await res.json()
 
@@ -123,7 +138,6 @@ export async function fetchWeather(
     }
 
     // Hourly (next 12 hours from current hour)
-    // current.time may include minutes (e.g. "2026-03-07T14:30"), truncate to hour
     const currentHour = data.current.time.slice(0, 13) + ':00'
     const currentHourIndex = data.hourly.time.findIndex(
       (t: string) => t === currentHour
@@ -144,9 +158,12 @@ export async function fetchWeather(
       })
     }
 
-    return { current, forecast, hourly }
+    return NextResponse.json({ current, forecast, hourly })
   } catch (e) {
-    console.error('fetchWeather failed:', e)
-    return null
+    console.error('GET /api/weather failed:', e)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
