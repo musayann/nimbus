@@ -1,12 +1,9 @@
-'use client'
-
-import { useState, useEffect } from 'react'
 import { Wind } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { AirQuality, Coordinates } from './types'
+import type { AirQuality } from './types'
 
 interface AirQualityCardProps {
-  coordinates: Coordinates
+  data: AirQuality | null
 }
 
 const AQI_COLORS = [
@@ -46,20 +43,7 @@ function aqiPercent(aqi: number): number {
   return Math.min((aqi / 300) * 100, 100)
 }
 
-export function AirQualityCard({ coordinates }: AirQualityCardProps) {
-  const [airQuality, setAirQuality] = useState<AirQuality | null>(null)
-
-  useEffect(() => {
-    setAirQuality(null)
-    fetch(`/api/air-quality?lat=${coordinates.lat}&lon=${coordinates.lon}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          setAirQuality(data)
-        }
-      })
-  }, [coordinates, coordinates.lat, coordinates.lon])
-
+export function AirQualityCard({ data: airQuality }: AirQualityCardProps) {
   if (!airQuality) return null
 
   const entry = getAqiEntry(airQuality.aqi)

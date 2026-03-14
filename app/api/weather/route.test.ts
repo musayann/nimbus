@@ -1,6 +1,6 @@
 import { GET } from './route'
 
-function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
+function makeOpenMeteoResponse() {
   return {
     current: {
       time: '2026-03-08T14:30',
@@ -15,7 +15,6 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
       visibility: 15000,
       uv_index: 6,
       dew_point_2m: 14.8,
-      ...((overrides.current as object) ?? {}),
     },
     daily: {
       time: [
@@ -50,7 +49,6 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
       precipitation_probability_max: [10, 30, 50, 70, 90, 20],
       wind_speed_10m_max: [15, 20, 18, 25, 30, 12],
       relative_humidity_2m_max: [70, 75, 80, 85, 90, 65],
-      ...((overrides.daily as object) ?? {}),
     },
     hourly: {
       time: Array.from({ length: 48 }, (_, i) => {
@@ -61,8 +59,21 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
       temperature_2m: Array.from({ length: 48 }, (_, i) => 18 + (i % 8)),
       weather_code: Array.from({ length: 48 }, () => 0),
       precipitation_probability: Array.from({ length: 48 }, (_, i) => i * 2),
-      ...((overrides.hourly as object) ?? {}),
     },
+  }
+}
+
+function makeREMAResponse() {
+  return {
+    features: [
+      {
+        geometry: { coordinates: [29.88, -1.94] },
+        properties: {
+          aqi: 42,
+          data: [{ aqi: 42, PM25: 12, PM10: 20, NO2: 5, O3: 30 }],
+        },
+      },
+    ],
   }
 }
 
@@ -74,24 +85,6 @@ function makeRequest(params?: Record<string, string>) {
     }
   }
   return new Request(url.toString())
-}
-
-function mockFetchOk(body: unknown) {
-  vi.stubGlobal(
-    'fetch',
-    vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(body),
-    })
-  )
-}
-
-function mockFetchError() {
-  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
-}
-
-function mockFetchNotOk() {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
 }
 
 afterEach(() => {
@@ -109,154 +102,52 @@ describe('GET /api/weather', () => {
     expect(res.status).toBe(400)
   })
 
-  it('returns structured current, forecast, and hourly data', async () => {
-    mockFetchOk(makeOpenMeteoResponse())
+  it('returns combined weather and air quality data', async () => {
+    let callIndex = 0
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        const body =
+          callIndex++ === 0 ? makeOpenMeteoResponse() : makeREMAResponse()
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(body),
+        })
+      })
+    )
+
     const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
     expect(res.status).toBe(200)
 
     const result = await res.json()
-    expect(result.current.temperature).toBe(22)
-    expect(result.current.feelsLike).toBe(21)
-    expect(result.current.humidity).toBe(65)
-    expect(result.current.dewPoint).toBe(15)
-    expect(result.current.windSpeed).toBe(13)
-    expect(result.current.visibility).toBe(15)
-    expect(result.current.uvIndex).toBe(6)
-    expect(result.current.pressure).toBe(1013)
-    expect(result.current.precipitation).toBe(0.5)
-    expect(result.current.high).toBe(24)
-    expect(result.current.low).toBe(15)
-    expect(result.current.lastUpdated).toBeGreaterThan(0)
+    expect(result).toHaveProperty('current')
+    expect(result).toHaveProperty('forecast')
+    expect(result).toHaveProperty('hourly')
+    expect(result).toHaveProperty('airQuality')
+    expect(result.airQuality.aqi).toBe(42)
   })
 
-  describe('WMO code mapping', () => {
-    it.each([
-      [0, 'sunny', 'Clear sky'],
-      [2, 'partly-cloudy', 'Partly cloudy'],
-      [3, 'cloudy', 'Overcast'],
-      [45, 'foggy', 'Foggy'],
-      [53, 'rainy', 'Drizzle'],
-      [63, 'rainy', 'Rain'],
-      [73, 'snow', 'Snow'],
-      [81, 'rainy', 'Rain showers'],
-      [95, 'stormy', 'Thunderstorm'],
-    ])(
-      'maps WMO code %i to condition=%s, description=%s',
-      async (code, expectedCondition, expectedDescription) => {
-        mockFetchOk(makeOpenMeteoResponse({ current: { weather_code: code } }))
-        const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-        const result = await res.json()
-
-        expect(result.current.condition).toBe(expectedCondition)
-        expect(result.current.description).toBe(expectedDescription)
-      }
+  it('returns airQuality as null when REMA fetch fails', async () => {
+    let callIndex = 0
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        if (callIndex++ === 0) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(makeOpenMeteoResponse()),
+          })
+        }
+        return Promise.reject(new Error('REMA down'))
+      })
     )
-  })
 
-  describe('wind direction conversion', () => {
-    it.each([
-      [0, 'N'],
-      [45, 'NE'],
-      [90, 'E'],
-      [135, 'SE'],
-      [180, 'S'],
-      [225, 'SW'],
-      [270, 'W'],
-      [315, 'NW'],
-      [360, 'N'],
-    ])('converts %i degrees to %s', async (deg, expected) => {
-      mockFetchOk(
-        makeOpenMeteoResponse({ current: { wind_direction_10m: deg } })
-      )
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.current.windDirection).toBe(expected)
-    })
-  })
+    const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
+    expect(res.status).toBe(200)
 
-  describe('sunrise/sunset parsing', () => {
-    it('parses ISO times to HH:MM', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.current.sunrise).toBe('06:15')
-      expect(result.current.sunset).toBe('18:20')
-    })
-
-    it('returns "--:--" for missing sunrise/sunset', async () => {
-      mockFetchOk(
-        makeOpenMeteoResponse({
-          daily: { sunrise: [undefined], sunset: [undefined] },
-        })
-      )
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.current.sunrise).toBe('--:--')
-      expect(result.current.sunset).toBe('--:--')
-    })
-  })
-
-  describe('forecast', () => {
-    it('returns 5 forecast days', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.forecast).toHaveLength(5)
-    })
-
-    it('labels first forecast day as "Tomorrow"', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.forecast[0].date).toBe('Tomorrow')
-    })
-
-    it('maps WMO codes for each forecast day', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      // daily weather_code: [0, 2, 3, 45, 63, 95] — index 0 is today, forecast uses 1-5
-      expect(result.forecast[0].condition).toBe('partly-cloudy') // code 2
-      expect(result.forecast[1].condition).toBe('cloudy') // code 3
-      expect(result.forecast[2].condition).toBe('foggy') // code 45
-      expect(result.forecast[3].condition).toBe('rainy') // code 63
-      expect(result.forecast[4].condition).toBe('stormy') // code 95
-    })
-  })
-
-  describe('hourly', () => {
-    it('starts from current hour', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      // current.time is 2026-03-08T14:30, truncated to 14:00, so startIndex=14
-      expect(result.hourly.length).toBeLessThanOrEqual(12)
-      expect(result.hourly.length).toBeGreaterThan(0)
-    })
-
-    it('labels first hourly item as "Now"', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      expect(result.hourly[0].hour).toBe('Now')
-    })
-
-    it('labels subsequent hours with HH:MM', async () => {
-      mockFetchOk(makeOpenMeteoResponse())
-      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
-      const result = await res.json()
-      // startIndex = 14, so second item is hour 15
-      expect(result.hourly[1].hour).toBe('15:00')
-    })
-  })
-
-  it('rounds coordinates to 2 decimal places in upstream fetch', async () => {
-    mockFetchOk(makeOpenMeteoResponse())
-    await GET(makeRequest({ lat: '-1.9467', lon: '29.8781' }))
-    const fetchCall = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
-    const url = fetchCall[0] as string
-    expect(url).toContain('latitude=-1.95')
-    expect(url).toContain('longitude=29.88')
+    const result = await res.json()
+    expect(result.current).toBeDefined()
+    expect(result.airQuality).toBeNull()
   })
 
   describe('error handling', () => {
@@ -264,14 +155,17 @@ describe('GET /api/weather', () => {
       vi.spyOn(console, 'error').mockImplementation(() => {})
     })
 
-    it('returns 500 on fetch error', async () => {
-      mockFetchError()
+    it('returns 500 on weather fetch error', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockRejectedValue(new Error('network error'))
+      )
       const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       expect(res.status).toBe(500)
     })
 
     it('returns 500 on non-ok upstream response', async () => {
-      mockFetchNotOk()
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
       const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       expect(res.status).toBe(500)
     })

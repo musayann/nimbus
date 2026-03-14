@@ -11,7 +11,7 @@ import { WeatherDetailsCard } from './weather-details-card'
 import { AirQualityCard } from './air-quality-card'
 import { toast } from 'sonner'
 import { reverseGeocode } from '@/app/actions/location'
-import type { CurrentWeather, ForecastDay, HourlyItem } from './types'
+import type { AirQuality, CurrentWeather, ForecastDay, HourlyItem } from './types'
 import {
   saveWeatherToCache,
   getLastCachedWeather,
@@ -30,6 +30,7 @@ export function WeatherApp() {
   const [current, setCurrent] = useState<CurrentWeather | null>(null)
   const [forecast, setForecast] = useState<ForecastDay[]>([])
   const [hourly, setHourly] = useState<HourlyItem[]>([])
+  const [airQuality, setAirQuality] = useState<AirQuality | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
@@ -46,9 +47,11 @@ export function WeatherApp() {
     ) => {
       setIsLoading(true)
       setError(null)
-      const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`)
-      const result = res.ok ? await res.json() : null
+      setAirQuality(null)
+      const weatherRes = await fetch(`/api/weather?lat=${lat}&lon=${lon}`)
+      const result = weatherRes.ok ? await weatherRes.json() : null
       if (result) {
+        setAirQuality(result.airQuality ?? null)
         const currentData: CurrentWeather = {
           ...result.current,
           city,
@@ -230,7 +233,7 @@ export function WeatherApp() {
                 }
               />
               <HourlyForecast data={hourly} isLoading={isLoading} />
-              <AirQualityCard coordinates={current.coordinates} />
+              <AirQualityCard data={airQuality} />
               <WeatherDetailsCard weather={current} isLoading={isLoading} />
               <ForecastCard forecast={forecast} isLoading={isLoading} />
               <p className="text-center text-xs text-muted-foreground pb-4">
