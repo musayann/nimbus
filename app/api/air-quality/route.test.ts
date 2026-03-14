@@ -59,9 +59,7 @@ describe('GET /api/air-quality', () => {
     const nearStation = makeFeature(29.88, -1.94, 42)
     mockFetchOk(makeREMAResponse([farStation, nearStation]))
 
-    const res = await GET(
-      makeRequest({ lat: '-1.9403', lon: '29.8739' })
-    )
+    const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
     expect(res.status).toBe(200)
 
     const result = await res.json()
@@ -88,9 +86,7 @@ describe('GET /api/air-quality', () => {
       [500, 'Hazardous'],
     ])('maps AQI %i to level "%s"', async (aqi, expectedLevel) => {
       mockFetchOk(makeREMAResponse([makeFeature(29.88, -1.94, aqi)]))
-      const res = await GET(
-        makeRequest({ lat: '-1.9403', lon: '29.8739' })
-      )
+      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       const result = await res.json()
       expect(result.level).toBe(expectedLevel)
     })
@@ -105,14 +101,23 @@ describe('GET /api/air-quality', () => {
       },
     }
     mockFetchOk(makeREMAResponse([feature]))
-    const res = await GET(
-      makeRequest({ lat: '-1.9403', lon: '29.8739' })
-    )
+    const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
     const result = await res.json()
     expect(result.pm25).toBe(0)
     expect(result.pm10).toBe(0)
     expect(result.no2).toBe(0)
     expect(result.o3).toBe(0)
+  })
+
+  it('rounds coordinates before haversine lookup', async () => {
+    // Station at exactly (29.88, -1.94) — rounded coords (-1.94, 29.87) should
+    // still find the nearest station correctly
+    const station = makeFeature(29.88, -1.94, 50)
+    mockFetchOk(makeREMAResponse([station]))
+    const res = await GET(makeRequest({ lat: '-1.9467', lon: '29.8781' }))
+    expect(res.status).toBe(200)
+    const result = await res.json()
+    expect(result.aqi).toBe(50)
   })
 
   describe('error handling', () => {
@@ -121,25 +126,19 @@ describe('GET /api/air-quality', () => {
         'fetch',
         vi.fn().mockRejectedValue(new Error('network error'))
       )
-      const res = await GET(
-        makeRequest({ lat: '-1.9403', lon: '29.8739' })
-      )
+      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       expect(res.status).toBe(500)
     })
 
     it('returns 500 on non-ok upstream response', async () => {
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }))
-      const res = await GET(
-        makeRequest({ lat: '-1.9403', lon: '29.8739' })
-      )
+      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       expect(res.status).toBe(500)
     })
 
     it('returns 500 on empty features', async () => {
       mockFetchOk(makeREMAResponse([]))
-      const res = await GET(
-        makeRequest({ lat: '-1.9403', lon: '29.8739' })
-      )
+      const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))
       expect(res.status).toBe(500)
     })
   })

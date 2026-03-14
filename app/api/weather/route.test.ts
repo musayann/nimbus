@@ -250,6 +250,15 @@ describe('GET /api/weather', () => {
     })
   })
 
+  it('rounds coordinates to 2 decimal places in upstream fetch', async () => {
+    mockFetchOk(makeOpenMeteoResponse())
+    await GET(makeRequest({ lat: '-1.9467', lon: '29.8781' }))
+    const fetchCall = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    const url = fetchCall[0] as string
+    expect(url).toContain('latitude=-1.95')
+    expect(url).toContain('longitude=29.88')
+  })
+
   describe('error handling', () => {
     it('returns 500 on fetch error', async () => {
       mockFetchError()

@@ -5,6 +5,7 @@ import type {
   ForecastDay,
   HourlyItem,
 } from '@/components/weather/types'
+import { roundCoordinates } from '@/lib/geo'
 
 function mapWmoCode(code: number): {
   condition: WeatherCondition
@@ -65,9 +66,10 @@ export async function GET(request: Request) {
   }
 
   try {
+    const rounded = roundCoordinates(lat, lon)
     const params = new URLSearchParams({
-      latitude: lat.toString(),
-      longitude: lon.toString(),
+      latitude: rounded.lat.toString(),
+      longitude: rounded.lon.toString(),
       timezone: 'auto',
       forecast_days: '6',
       current:

@@ -1,6 +1,6 @@
 'use server'
 
-import { GeoResult } from '@/lib/geo'
+import { GeoResult, roundCoordinates } from '@/lib/geo'
 
 interface RawResult {
   name: string
@@ -107,7 +107,8 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
       format: 'json',
     })
     const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?${params}&&countryCode=RW` // Keep the location filter from the api otherwise the 6 results will not be relevant for us
+      `https://geocoding-api.open-meteo.com/v1/search?${params}&&countryCode=RW`, // Keep the location filter from the api otherwise the 6 results will not be relevant for us
+      { next: { revalidate: 3600 } } as RequestInit
     )
     if (!res.ok) return []
     const data = await res.json()
@@ -128,15 +129,19 @@ export async function reverseGeocode(
   lon: number
 ): Promise<GeoResult | null> {
   try {
+    const rounded = roundCoordinates(lat, lon)
     const params = new URLSearchParams({
-      lat: lat.toString(),
-      lon: lon.toString(),
+      lat: rounded.lat.toString(),
+      lon: rounded.lon.toString(),
       format: 'json',
       zoom: '10',
     })
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?${params}`,
-      { headers: { 'User-Agent': 'Igicu Weather App' } }
+      {
+        headers: { 'User-Agent': 'Igicu Weather App' },
+        next: { revalidate: 3600 },
+      } as RequestInit
     )
     if (!res.ok) return null
     const data = await res.json()

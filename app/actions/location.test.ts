@@ -151,6 +151,14 @@ describe('searchCities', () => {
     const result = await searchCities('Kigali')
     expect(result).toEqual([])
   })
+
+  it('passes next.revalidate option to fetch', async () => {
+    mockFetchOk(makeGeocodingResponse([makeRawResult()]))
+    await searchCities('Kigali')
+    const fetchCall = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    const options = fetchCall[1] as { next?: { revalidate: number } }
+    expect(options.next?.revalidate).toBe(3600)
+  })
 })
 
 describe('reverseGeocode', () => {
@@ -234,5 +242,28 @@ describe('reverseGeocode', () => {
     })
     const result = await reverseGeocode(-1.9403, 29.8739)
     expect(result).toBeNull()
+  })
+
+  it('passes next.revalidate option to fetch', async () => {
+    mockFetchOk({
+      address: { city: 'Kigali', country_code: 'rw' },
+      name: 'Kigali',
+    })
+    await reverseGeocode(-1.9403, 29.8739)
+    const fetchCall = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    const options = fetchCall[1] as { next?: { revalidate: number } }
+    expect(options.next?.revalidate).toBe(3600)
+  })
+
+  it('rounds coordinates before building fetch URL', async () => {
+    mockFetchOk({
+      address: { city: 'Kigali', country_code: 'rw' },
+      name: 'Kigali',
+    })
+    await reverseGeocode(-1.9467, 29.8781)
+    const fetchCall = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+    const url = fetchCall[0] as string
+    expect(url).toContain('lat=-1.95')
+    expect(url).toContain('lon=29.88')
   })
 })

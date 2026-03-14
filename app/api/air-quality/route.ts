@@ -4,6 +4,7 @@ import type {
   AirQualityLevel,
   Coordinates,
 } from '@/components/weather/types'
+import { roundCoordinates } from '@/lib/geo'
 
 interface REMAReading {
   aqi?: number
@@ -91,6 +92,7 @@ export async function GET(request: Request) {
       )
     }
 
+    const rounded = roundCoordinates(lat, lon)
     const features = json.features
     if (!features || features.length === 0) {
       return NextResponse.json(
@@ -104,7 +106,10 @@ export async function GET(request: Request) {
 
     for (const f of features) {
       const [fLon, fLat] = f.geometry.coordinates
-      const dist = haversineDistance({ lat, lon }, { lat: fLat, lon: fLon })
+      const dist = haversineDistance(
+        { lat: rounded.lat, lon: rounded.lon },
+        { lat: fLat, lon: fLon }
+      )
       if (dist < minDist) {
         minDist = dist
         nearest = f
