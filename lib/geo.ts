@@ -10,7 +10,7 @@ export interface GeoResult {
 export function roundCoordinates(lat: number, lon: number, decimals = 2) {
   const factor = 10 ** decimals
   return {
-    lat: Math.round(lat * factor) / factor,
-    lon: Math.round(lon * factor) / factor,
+    lat: Math.round((lat + Number.EPSILON) * factor) / factor,
+    lon: Math.round((lon + Number.EPSILON) * factor) / factor,
   }
 }

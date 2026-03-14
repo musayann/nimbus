@@ -260,6 +260,10 @@ describe('GET /api/weather', () => {
   })
 
   describe('error handling', () => {
+    beforeEach(() => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
     it('returns 500 on fetch error', async () => {
       mockFetchError()
       const res = await GET(makeRequest({ lat: '-1.9403', lon: '29.8739' }))

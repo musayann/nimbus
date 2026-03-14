@@ -121,6 +121,10 @@ describe('GET /api/air-quality', () => {
   })
 
   describe('error handling', () => {
+    beforeEach(() => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
     it('returns 500 on fetch error', async () => {
       vi.stubGlobal(
         'fetch',
