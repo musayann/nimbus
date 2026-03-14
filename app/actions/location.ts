@@ -98,10 +98,11 @@ function resolveRegion(r: RawResult): GeoResult {
 }
 
 export async function searchCities(query: string): Promise<GeoResult[]> {
-  if (!query.trim()) return []
+  const trimmed = query.trim()
+  if (!trimmed || trimmed.length > 100) return []
   try {
     const params = new URLSearchParams({
-      name: query.trim(),
+      name: trimmed,
       count: '6',
       language: 'en',
       format: 'json',
@@ -117,7 +118,7 @@ export async function searchCities(query: string): Promise<GeoResult[]> {
     const filtered = filterByCountry(normalized, 'RW') // We are doing this to double check sometimes the api doesn't just return relevant results
     const results = filtered.map(resolveRegion)
     const deduplicated = deduplicateByFeatureCode(results)
-    const ranked = rankByRelevance(deduplicated, query.trim())
+    const ranked = rankByRelevance(deduplicated, trimmed)
     return ranked
   } catch {
     return []

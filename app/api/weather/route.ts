@@ -24,6 +24,13 @@ export async function GET(request: Request) {
     )
   }
 
+  if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    return NextResponse.json(
+      { error: 'lat must be between -90 and 90, lon between -180 and 180' },
+      { status: 400 }
+    )
+  }
+
   try {
     const [weather, airQuality] = await Promise.all([
       fetchWeather(lat, lon),
