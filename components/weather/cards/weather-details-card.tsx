@@ -1,6 +1,7 @@
 import type { CurrentWeather } from '@/types/weather'
 import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
 import { getDewPointLabel, getPressureLabel } from '@/lib/weather'
+import { useUnits } from '@/hooks/use-units'
 
 interface WeatherDetailsCardProps {
   weather?: CurrentWeather | null
@@ -24,9 +25,11 @@ export function WeatherDetailsCard({
     )
   }
 
+  const { temp, precip, pressure: pressureConv, tempUnit, precipUnit, pressureUnit } = useUnits()
+
   if (!weather) return null
 
-  const { precipitation, dewPoint, humidity, pressure } = weather
+  const { precipitation, dewPoint, humidity, pressure: pressureVal } = weather
 
   return (
     <div className="glass rounded-3xl p-6 flex flex-col gap-5">
@@ -39,13 +42,13 @@ export function WeatherDetailsCard({
         <DetailTile
           icon={<CloudRain className="w-4 h-4" />}
           label="Precipitation"
-          value={`${precipitation.toFixed(1)} mm`}
+          value={`${precip(precipitation).toFixed(precipUnit === 'mm' ? 1 : 2)} ${precipUnit}`}
           sub="Last hour"
         />
         <DetailTile
           icon={<Thermometer className="w-4 h-4" />}
           label="Dew Point"
-          value={`${dewPoint}°C`}
+          value={`${temp(dewPoint)}${tempUnit}`}
           sub={getDewPointLabel(dewPoint)}
         />
         <DetailTile
@@ -60,8 +63,8 @@ export function WeatherDetailsCard({
         <DetailTile
           icon={<Gauge className="w-4 h-4" />}
           label="Pressure"
-          value={`${pressure} hPa`}
-          sub={getPressureLabel(pressure)}
+          value={`${pressureConv(pressureVal)} ${pressureUnit}`}
+          sub={getPressureLabel(pressureVal)}
         />
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { WeatherIcon } from '../shared/weather-icon'
 import type { ForecastDay } from '@/types/weather'
 import { Droplets, Wind } from 'lucide-react'
+import { useUnits } from '@/hooks/use-units'
 
 interface ForecastCardProps {
   forecast: ForecastDay[]
@@ -10,6 +11,7 @@ interface ForecastCardProps {
 }
 
 export function ForecastCard({ forecast, isLoading }: ForecastCardProps) {
+  const { temp, speed, speedUnit } = useUnits()
   if (isLoading) {
     return (
       <div className="glass rounded-3xl p-6">
@@ -35,20 +37,20 @@ export function ForecastCard({ forecast, isLoading }: ForecastCardProps) {
       {/* Desktop: horizontal list */}
       <div className="hidden sm:grid grid-cols-5 gap-2">
         {forecast.map((day, i) => (
-          <ForecastDayTile key={i} day={day} />
+          <ForecastDayTile key={i} day={day} temp={temp} />
         ))}
       </div>
       {/* Mobile: vertical list */}
       <div className="sm:hidden flex flex-col gap-3">
         {forecast.map((day, i) => (
-          <ForecastDayRow key={i} day={day} />
+          <ForecastDayRow key={i} day={day} temp={temp} speed={speed} speedUnit={speedUnit} />
         ))}
       </div>
     </div>
   )
 }
 
-function ForecastDayTile({ day }: { day: ForecastDay }) {
+function ForecastDayTile({ day, temp }: { day: ForecastDay; temp: (c: number) => number }) {
   return (
     <div className="flex flex-col items-center gap-3 weather-tile rounded-2xl px-2 py-4 transition-colors">
       <span className="text-xs font-semibold text-muted-foreground uppercase">
@@ -56,8 +58,8 @@ function ForecastDayTile({ day }: { day: ForecastDay }) {
       </span>
       <WeatherIcon condition={day.condition} size={40} />
       <div className="text-center">
-        <p className="text-sm font-bold text-foreground">{day.high}°</p>
-        <p className="text-xs text-muted-foreground">{day.low}°</p>
+        <p className="text-sm font-bold text-foreground">{temp(day.high)}°</p>
+        <p className="text-xs text-muted-foreground">{temp(day.low)}°</p>
       </div>
       <div className="flex items-center gap-1 text-xs text-primary">
         <Droplets className="w-3 h-3" />
@@ -67,7 +69,7 @@ function ForecastDayTile({ day }: { day: ForecastDay }) {
   )
 }
 
-function ForecastDayRow({ day }: { day: ForecastDay }) {
+function ForecastDayRow({ day, temp, speed, speedUnit }: { day: ForecastDay; temp: (c: number) => number; speed: (kmh: number) => number; speedUnit: string }) {
   return (
     <div className="flex items-center justify-between bg-white/5 rounded-2xl px-4 py-3 hover:bg-white/10 transition-colors">
       <div className="flex items-center gap-3 w-28">
@@ -84,11 +86,11 @@ function ForecastDayRow({ day }: { day: ForecastDay }) {
         </div>
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Wind className="w-3 h-3" />
-          <span>{day.windSpeed}</span>
+          <span>{speed(day.windSpeed)} {speedUnit}</span>
         </div>
         <div className="text-right w-15">
-          <span className="text-sm font-bold text-foreground">{day.high}°</span>
-          <span className="text-sm text-muted-foreground"> / {day.low}°</span>
+          <span className="text-sm font-bold text-foreground">{temp(day.high)}°</span>
+          <span className="text-sm text-muted-foreground"> / {temp(day.low)}°</span>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { ThemeColorMeta } from '@/components/theme-color-meta'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+import { UnitsProvider } from '@/hooks/use-units'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -65,10 +66,12 @@ export default function RootLayout({
       />
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ThemeColorMeta />
-          {children}
-          <Toaster />
-          <Analytics />
+          <UnitsProvider>
+            <ThemeColorMeta />
+            {children}
+            <Toaster />
+            <Analytics />
+          </UnitsProvider>
         </ThemeProvider>
       </body>
     </html>

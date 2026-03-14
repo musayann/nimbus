@@ -3,6 +3,7 @@
 import { useTheme } from 'next-themes'
 import { Sun, Moon } from 'lucide-react'
 import { SearchBar } from '../shared/search-bar'
+import { useUnits } from '@/hooks/use-units'
 
 interface WeatherHeaderProps {
   onSearch: (
@@ -22,6 +23,7 @@ export function WeatherHeader({
   isLocating,
 }: WeatherHeaderProps) {
   const { resolvedTheme, setTheme } = useTheme()
+  const { unitSystem, toggleUnits } = useUnits()
 
   return (
     <header className="relative z-10 px-4 pt-6 pb-4 md:px-8">
@@ -53,9 +55,13 @@ export function WeatherHeader({
                 <Moon size={16} />
               )}
             </button>
-            <div className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium">
-              Metric · °C
-            </div>
+            <button
+              onClick={toggleUnits}
+              aria-label={`Switch to ${unitSystem === 'metric' ? 'imperial' : 'metric'} units`}
+              className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium hover:text-foreground transition-colors cursor-pointer"
+            >
+              {unitSystem === 'metric' ? 'Metric · °C' : 'Imperial · °F'}
+            </button>
           </div>
         </div>
         <SearchBar
