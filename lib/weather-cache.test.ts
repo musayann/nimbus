@@ -5,11 +5,7 @@ import {
   getLastCachedWeather,
   clearAllCachedData,
 } from './weather-cache'
-import type {
-  CurrentWeather,
-  ForecastDay,
-  HourlyItem,
-} from '@/types/weather'
+import type { CurrentWeather, ForecastDay, HourlyItem } from '@/types/weather'
 
 // --- localStorage stub ---
 let store: Record<string, string>

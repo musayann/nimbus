@@ -136,8 +136,7 @@ export async function fetchWeather(
       hour,
       temp: Math.round(data.hourly.temperature_2m[idx]),
       condition: mapWmoCode(data.hourly.weather_code[idx]).condition,
-      precipitationProbability:
-        data.hourly.precipitation_probability[idx] ?? 0,
+      precipitationProbability: data.hourly.precipitation_probability[idx] ?? 0,
     })
   }
 

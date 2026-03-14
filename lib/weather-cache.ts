@@ -1,8 +1,4 @@
-import type {
-  CurrentWeather,
-  ForecastDay,
-  HourlyItem,
-} from '@/types/weather'
+import type { CurrentWeather, ForecastDay, HourlyItem } from '@/types/weather'
 
 interface CachedWeatherData {
   current: CurrentWeather

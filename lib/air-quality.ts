@@ -1,8 +1,4 @@
-import type {
-  AirQuality,
-  AirQualityLevel,
-  Coordinates,
-} from '@/types/weather'
+import type { AirQuality, AirQualityLevel, Coordinates } from '@/types/weather'
 import { roundCoordinates } from '@/lib/geo'
 
 interface REMAReading {
