@@ -46,7 +46,7 @@ export interface CurrentWeather {
   visibility: number // km
   uvIndex: number
   pressure: number // hPa
-  precipitation: number // mm (last hour)
+  precipitation: number // mm (today)
   sunrise: string
   sunset: string
   high: number

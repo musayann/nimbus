@@ -54,7 +54,7 @@ export async function fetchWeather(
   const params = new URLSearchParams({
     latitude: rounded.lat.toString(),
     longitude: rounded.lon.toString(),
-    timezone: 'auto',
+    timezone: 'Africa/Kigali',
     forecast_days: '6',
     current:
       'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,uv_index,dew_point_2m',
@@ -87,7 +87,7 @@ export async function fetchWeather(
     visibility: Math.round(data.current.visibility / 1000),
     uvIndex: data.current.uv_index,
     pressure: Math.round(data.current.pressure_msl),
-    precipitation: data.current.precipitation,
+    precipitation: data.daily.precipitation_sum[0],
     sunrise: sunriseTime,
     sunset: sunsetTime,
     high: Math.round(data.daily.temperature_2m_max[0]),

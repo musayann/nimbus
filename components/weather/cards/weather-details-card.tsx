@@ -40,7 +40,7 @@ export function WeatherDetailsCard({
           icon={<CloudRain className="w-4 h-4" />}
           label="Precipitation"
           value={`${precipitation.toFixed(1)} mm`}
-          sub="Last hour"
+          sub="Today"
         />
         <DetailTile
           icon={<Thermometer className="w-4 h-4" />}
