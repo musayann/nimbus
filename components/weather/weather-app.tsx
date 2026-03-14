@@ -1,17 +1,17 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { useTheme } from 'next-themes'
-import { Sun, Moon } from 'lucide-react'
-import { SearchBar } from './search-bar'
-import { CurrentWeatherCard } from './current-weather-card'
-import { ForecastCard } from './forecast-card'
-import { HourlyForecast } from './hourly-forecast'
-import { WeatherDetailsCard } from './weather-details-card'
-import { AirQualityCard } from './air-quality-card'
 import { toast } from 'sonner'
 import { reverseGeocode } from '@/app/actions/location'
-import type { AirQuality, CurrentWeather, ForecastDay, HourlyItem } from './types'
+import { WeatherHeader } from './weather-header'
+import { WeatherMain } from './weather-main'
+import { WeatherFooter } from './weather-footer'
+import type {
+  AirQuality,
+  CurrentWeather,
+  ForecastDay,
+  HourlyItem,
+} from './types'
 import {
   saveWeatherToCache,
   getLastCachedWeather,
@@ -35,7 +35,6 @@ export function WeatherApp() {
   const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const initializedRef = useRef(false)
-  const { resolvedTheme, setTheme } = useTheme()
 
   const loadCity = useCallback(
     async (
@@ -160,136 +159,31 @@ export function WeatherApp() {
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
-      <header className="relative z-10 px-4 pt-6 pb-4 md:px-8">
-        <div className="max-w-2xl mx-auto flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground tracking-tight">
-                Igicu
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Live weather for Rwanda
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() =>
-                  setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
-                }
-                aria-label={
-                  resolvedTheme === 'dark'
-                    ? 'Switch to light mode'
-                    : 'Switch to dark mode'
-                }
-                className="glass rounded-xl p-2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {resolvedTheme === 'dark' ? (
-                  <Sun size={16} />
-                ) : (
-                  <Moon size={16} />
-                )}
-              </button>
-              <div className="glass rounded-xl px-3 py-1.5 text-xs text-muted-foreground font-medium">
-                Metric · °C
-              </div>
-            </div>
-          </div>
-          <SearchBar
-            onSearch={loadCity}
-            onUseLocation={handleUseLocation}
-            isLocating={isLocating}
-          />
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="relative z-0 flex-1 px-4 pb-8 md:px-8">
-        <div className="max-w-2xl mx-auto flex flex-col gap-4">
-          {error && !current && (
-            <div className="glass rounded-3xl p-8 text-center flex flex-col items-center gap-3">
-              <p className="text-sm text-muted-foreground">{error}</p>
-              <button
-                onClick={loadDefault}
-                className="text-sm font-medium text-primary hover:text-accent transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-          {current && (
-            <>
-              <CurrentWeatherCard
-                weather={current}
-                isLoading={isLoading}
-                onSync={() =>
-                  loadCity(
-                    current.city,
-                    current.country,
-                    current.coordinates.lat,
-                    current.coordinates.lon,
-                    current.region
-                  )
-                }
-              />
-              <HourlyForecast data={hourly} isLoading={isLoading} />
-              <AirQualityCard data={airQuality} />
-              <WeatherDetailsCard weather={current} isLoading={isLoading} />
-              <ForecastCard forecast={forecast} isLoading={isLoading} />
-              <p className="text-center text-xs text-muted-foreground pb-4">
-                Displaying metric measurements · km/h · °C · hPa
-              </p>
-            </>
-          )}
-        </div>
-      </main>
-
-      {/* Attribution footer */}
-      <footer className="relative z-10 px-4 pb-6 pt-2 md:px-8">
-        <div className="max-w-2xl mx-auto flex flex-col items-center gap-1.5 text-[11px] text-muted-foreground/70">
-          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
-            <span>
-              Weather data by{' '}
-              <a
-                href="https://open-meteo.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                Open-Meteo
-              </a>
-            </span>
-            <span>
-              Geocoding by{' '}
-              <a
-                href="https://www.openstreetmap.org/copyright"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                OpenStreetMap
-              </a>
-            </span>
-            <span>
-              Air quality by{' '}
-              <a
-                href="https://www.rema.gov.rw"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-foreground transition-colors"
-              >
-                REMA Rwanda
-              </a>
-            </span>
-          </div>
-          <a
-            href="/privacy"
-            className="underline underline-offset-2 hover:text-foreground transition-colors"
-          >
-            Privacy Policy
-          </a>
-        </div>
-      </footer>
+      <WeatherHeader
+        onSearch={loadCity}
+        onUseLocation={handleUseLocation}
+        isLocating={isLocating}
+      />
+      <WeatherMain
+        current={current}
+        forecast={forecast}
+        hourly={hourly}
+        airQuality={airQuality}
+        isLoading={isLoading}
+        error={error}
+        onRetry={loadDefault}
+        onSync={() =>
+          current &&
+          loadCity(
+            current.city,
+            current.country,
+            current.coordinates.lat,
+            current.coordinates.lon,
+            current.region
+          )
+        }
+      />
+      <WeatherFooter />
     </div>
   )
 }

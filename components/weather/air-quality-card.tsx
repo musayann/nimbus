@@ -4,6 +4,7 @@ import type { AirQuality } from './types'
 
 interface AirQualityCardProps {
   data: AirQuality | null
+  isLoading?: boolean
 }
 
 const AQI_COLORS = [
@@ -43,7 +44,19 @@ function aqiPercent(aqi: number): number {
   return Math.min((aqi / 300) * 100, 100)
 }
 
-export function AirQualityCard({ data: airQuality }: AirQualityCardProps) {
+export function AirQualityCard({
+  data: airQuality,
+  isLoading,
+}: AirQualityCardProps) {
+  if (isLoading) {
+    return (
+      <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
+        <div className="w-28 h-4 rounded bg-white/10" />
+        <div className="h-20 rounded-2xl bg-white/10" />
+      </div>
+    )
+  }
+
   if (!airQuality) return null
 
   const entry = getAqiEntry(airQuality.aqi)

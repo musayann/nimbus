@@ -3,7 +3,7 @@ import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
 import { getDewPointLabel, getPressureLabel } from '@/lib/weather'
 
 interface WeatherDetailsCardProps {
-  weather: CurrentWeather
+  weather?: CurrentWeather | null
   isLoading?: boolean
 }
 
@@ -23,6 +23,8 @@ export function WeatherDetailsCard({
       </div>
     )
   }
+
+  if (!weather) return null
 
   const { precipitation, dewPoint, humidity, pressure } = weather
 
