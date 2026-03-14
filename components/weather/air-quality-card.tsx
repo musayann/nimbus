@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Wind } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AirQuality, Coordinates } from './types'
-import { fetchAirQuality } from '@/app/actions/air-quality'
 
 interface AirQualityCardProps {
   coordinates: Coordinates
@@ -52,11 +51,13 @@ export function AirQualityCard({ coordinates }: AirQualityCardProps) {
 
   useEffect(() => {
     setAirQuality(null)
-    fetchAirQuality(coordinates).then((data) => {
-      if (data) {
-        setAirQuality(data)
-      }
-    })
+    fetch(`/api/air-quality?lat=${coordinates.lat}&lon=${coordinates.lon}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setAirQuality(data)
+        }
+      })
   }, [coordinates, coordinates.lat, coordinates.lon])
 
   if (!airQuality) return null

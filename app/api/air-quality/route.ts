@@ -1,5 +1,4 @@
-'use server'
-
+import { NextResponse } from 'next/server'
 import type {
   AirQuality,
   AirQualityLevel,
@@ -61,32 +60,62 @@ async function getREMAData(): Promise<REMAResponse | null> {
   return res.json()
 }
 
-export async function fetchAirQuality(
-  coords: Coordinates
-): Promise<AirQuality | null> {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const latStr = searchParams.get('lat')
+  const lonStr = searchParams.get('lon')
+
+  if (!latStr || !lonStr) {
+    return NextResponse.json(
+      { error: 'Missing required query parameters: lat and lon' },
+      { status: 400 }
+    )
+  }
+
+  const lat = Number(latStr)
+  const lon = Number(lonStr)
+
+  if (Number.isNaN(lat) || Number.isNaN(lon)) {
+    return NextResponse.json(
+      { error: 'lat and lon must be valid numbers' },
+      { status: 400 }
+    )
+  }
+
   try {
     const json = await getREMAData()
-    if (!json) return null
+    if (!json) {
+      return NextResponse.json(
+        { error: 'Failed to fetch air quality data from upstream' },
+        { status: 500 }
+      )
+    }
 
     const features = json.features
-    if (!features || features.length === 0) return null
+    if (!features || features.length === 0) {
+      return NextResponse.json(
+        { error: 'No air quality stations available' },
+        { status: 500 }
+      )
+    }
 
     let nearest = features[0]
     let minDist = Infinity
 
     for (const f of features) {
-      const [lon, lat] = f.geometry.coordinates
-      const dist = haversineDistance(coords, { lat, lon })
+      const [fLon, fLat] = f.geometry.coordinates
+      const dist = haversineDistance({ lat, lon }, { lat: fLat, lon: fLon })
       if (dist < minDist) {
         minDist = dist
         nearest = f
       }
     }
+
     const { data } = nearest.properties
     const latest = data[data.length - 1] ?? {}
     const aqi = latest.aqi || 0
 
-    return {
+    const airQuality: AirQuality = {
       aqi,
       level: levelFromAqi(aqi),
       pm25: latest.PM25 ?? 0,
@@ -94,8 +123,13 @@ export async function fetchAirQuality(
       o3: latest.O3 ?? 0,
       no2: latest.NO2 ?? 0,
     }
+
+    return NextResponse.json(airQuality)
   } catch (e) {
-    console.error('fetchAirQuality failed:', e)
-    return null
+    console.error('GET /api/air-quality failed:', e)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
   }
 }
