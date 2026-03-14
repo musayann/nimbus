@@ -1,8 +1,8 @@
 'use client'
 
 import { Droplets } from 'lucide-react'
-import type { HourlyItem } from './types'
-import { WeatherIcon } from './weather-icon'
+import type { HourlyItem } from '@/types/weather'
+import { WeatherIcon } from '../shared/weather-icon'
 
 interface HourlyForecastProps {
   data?: HourlyItem[]

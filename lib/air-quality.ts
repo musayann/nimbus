@@ -2,7 +2,7 @@ import type {
   AirQuality,
   AirQualityLevel,
   Coordinates,
-} from '@/components/weather/types'
+} from '@/types/weather'
 import { roundCoordinates } from '@/lib/geo'
 
 interface REMAReading {

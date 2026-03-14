@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes'
 import { Sun, Moon } from 'lucide-react'
-import { SearchBar } from './search-bar'
+import { SearchBar } from '../shared/search-bar'
 
 interface WeatherHeaderProps {
   onSearch: (

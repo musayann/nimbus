@@ -1,6 +1,6 @@
 import { Wind } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { AirQuality } from './types'
+import type { AirQuality } from '@/types/weather'
 
 interface AirQualityCardProps {
   data: AirQuality | null

@@ -1,4 +1,4 @@
-import type { CurrentWeather } from './types'
+import type { CurrentWeather } from '@/types/weather'
 import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
 import { getDewPointLabel, getPressureLabel } from '@/lib/weather'
 

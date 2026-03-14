@@ -5,7 +5,7 @@ import { WeatherHeader } from './weather-header'
 import { WeatherMain } from './weather-main'
 import { WeatherFooter } from './weather-footer'
 
-export function WeatherApp() {
+export function WeatherLayout() {
   const {
     current,
     forecast,

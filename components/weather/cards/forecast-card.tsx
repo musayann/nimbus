@@ -1,7 +1,7 @@
 'use client'
 
-import { WeatherIcon } from './weather-icon'
-import type { ForecastDay } from './types'
+import { WeatherIcon } from '../shared/weather-icon'
+import type { ForecastDay } from '@/types/weather'
 import { Droplets, Wind } from 'lucide-react'
 
 interface ForecastCardProps {

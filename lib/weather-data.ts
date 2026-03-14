@@ -3,7 +3,7 @@ import type {
   CurrentWeather,
   ForecastDay,
   HourlyItem,
-} from '@/components/weather/types'
+} from '@/types/weather'
 import { roundCoordinates } from '@/lib/geo'
 
 function mapWmoCode(code: number): {

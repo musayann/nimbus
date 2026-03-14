@@ -1,14 +1,14 @@
-import { CurrentWeatherCard } from './current-weather-card'
-import { ForecastCard } from './forecast-card'
-import { HourlyForecast } from './hourly-forecast'
-import { WeatherDetailsCard } from './weather-details-card'
-import { AirQualityCard } from './air-quality-card'
+import { CurrentWeatherCard } from '../cards/current-weather-card'
+import { ForecastCard } from '../cards/forecast-card'
+import { HourlyForecast } from '../cards/hourly-forecast'
+import { WeatherDetailsCard } from '../cards/weather-details-card'
+import { AirQualityCard } from '../cards/air-quality-card'
 import type {
   AirQuality,
   CurrentWeather,
   ForecastDay,
   HourlyItem,
-} from './types'
+} from '@/types/weather'
 
 interface WeatherMainProps {
   current: CurrentWeather | null

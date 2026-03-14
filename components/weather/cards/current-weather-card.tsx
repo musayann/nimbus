@@ -1,10 +1,10 @@
 'use client'
 
-import { WeatherIcon } from './weather-icon'
-import type { CurrentWeather } from './types'
+import { WeatherIcon } from '../shared/weather-icon'
+import type { CurrentWeather } from '@/types/weather'
 import { MapPin, Sunrise, Sunset, Gauge } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { SyncButton } from './sync-button'
+import { SyncButton } from '../shared/sync-button'
 
 interface CurrentWeatherCardProps {
   weather?: CurrentWeather | null

@@ -1,7 +1,7 @@
 'use client'
 
 import { CloudOff } from 'lucide-react'
-import type { WeatherCondition } from './types'
+import type { WeatherCondition } from '@/types/weather'
 
 interface WeatherIconProps {
   condition: WeatherCondition

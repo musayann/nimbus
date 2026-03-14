@@ -9,7 +9,7 @@ import type {
   CurrentWeather,
   ForecastDay,
   HourlyItem,
-} from '@/components/weather/types'
+} from '@/types/weather'
 
 // --- localStorage stub ---
 let store: Record<string, string>

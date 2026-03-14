@@ -8,7 +8,7 @@ import type {
   CurrentWeather,
   ForecastDay,
   HourlyItem,
-} from '@/components/weather/types'
+} from '@/types/weather'
 import {
   saveWeatherToCache,
   getLastCachedWeather,

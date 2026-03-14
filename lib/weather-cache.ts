@@ -2,7 +2,7 @@ import type {
   CurrentWeather,
   ForecastDay,
   HourlyItem,
-} from '@/components/weather/types'
+} from '@/types/weather'
 
 interface CachedWeatherData {
   current: CurrentWeather
