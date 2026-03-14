@@ -5,6 +5,7 @@ import type { CurrentWeather } from '@/types/weather'
 import { MapPin, Sunrise, Sunset, Gauge } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SyncButton } from '../shared/sync-button'
+import { useUnits } from '@/hooks/use-units'
 
 interface CurrentWeatherCardProps {
   weather?: CurrentWeather | null
@@ -17,6 +18,8 @@ export function CurrentWeatherCard({
   isLoading,
   onSync,
 }: CurrentWeatherCardProps) {
+  const { temp, speed, distance, pressure, tempUnit, speedUnit, distanceUnit, pressureUnit } = useUnits()
+
   if (isLoading || !weather) {
     return (
       <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-70 animate-pulse">
@@ -65,10 +68,10 @@ export function CurrentWeatherCard({
           <div>
             <div className="flex items-start">
               <span className="text-7xl md:text-8xl font-bold text-foreground leading-none tracking-tighter">
-                {weather.temperature}
+                {temp(weather.temperature)}
               </span>
               <span className="text-3xl font-light text-muted-foreground mt-2 pl-1">
-                °C
+                {tempUnit}
               </span>
             </div>
             <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
@@ -78,19 +81,19 @@ export function CurrentWeatherCard({
               <span className="text-xs text-muted-foreground">
                 H{' '}
                 <span className="text-foreground font-medium">
-                  {weather.high}°
+                  {temp(weather.high)}°
                 </span>
               </span>
               <span className="text-xs text-muted-foreground">
                 L{' '}
                 <span className="text-foreground font-medium">
-                  {weather.low}°
+                  {temp(weather.low)}°
                 </span>
               </span>
               <span className="text-xs text-muted-foreground">
                 Feels{' '}
                 <span className="text-foreground font-medium">
-                  {weather.feelsLike}°
+                  {temp(weather.feelsLike)}°
                 </span>
               </span>
             </div>
@@ -107,9 +110,9 @@ export function CurrentWeatherCard({
           <StatPill label="Humidity" value={`${weather.humidity}%`} />
           <StatPill
             label="Wind"
-            value={`${weather.windSpeed} km/h ${weather.windDirection}`}
+            value={`${speed(weather.windSpeed)} ${speedUnit} ${weather.windDirection}`}
           />
-          <StatPill label="Visibility" value={`${weather.visibility} km`} />
+          <StatPill label="Visibility" value={`${distance(weather.visibility)} ${distanceUnit}`} />
           <StatPill
             label="UV Index"
             value={`${weather.uvIndex}`}
@@ -130,7 +133,7 @@ export function CurrentWeatherCard({
           />
           <SunPill
             label="Pressure"
-            value={`${weather.pressure} hPa`}
+            value={`${pressure(weather.pressure)} ${pressureUnit}`}
             icon={<Gauge className="w-4 h-4" />}
           />
         </div>{' '}

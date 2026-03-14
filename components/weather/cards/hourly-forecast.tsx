@@ -3,6 +3,7 @@
 import { Droplets } from 'lucide-react'
 import type { HourlyItem } from '@/types/weather'
 import { WeatherIcon } from '../shared/weather-icon'
+import { useUnits } from '@/hooks/use-units'
 
 interface HourlyForecastProps {
   data?: HourlyItem[]
@@ -10,6 +11,7 @@ interface HourlyForecastProps {
 }
 
 export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
+  const { temp } = useUnits()
   if (isLoading) {
     return (
       <div className="glass rounded-3xl p-6">
@@ -35,8 +37,8 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
 
   if (!data || data.length === 0) return null
 
-  const maxTemp = Math.max(...data.map((h) => h.temp))
-  const minTemp = Math.min(...data.map((h) => h.temp))
+  const maxTemp = Math.max(...data.map((h) => temp(h.temp)))
+  const minTemp = Math.min(...data.map((h) => temp(h.temp)))
   const range = maxTemp - minTemp || 1
 
   return (
@@ -48,7 +50,7 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
         <div className="flex gap-3 min-w-max">
           {data.map((item, i) => {
             const barHeight =
-              Math.round(((item.temp - minTemp) / range) * 40) + 12
+              Math.round(((temp(item.temp) - minTemp) / range) * 40) + 12
             return (
               <div key={i} className="flex flex-col items-center gap-2 w-14">
                 <span className="text-xs text-muted-foreground font-medium">
@@ -63,7 +65,7 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
                   />
                 </div>
                 <span className="text-sm font-semibold text-foreground">
-                  {item.temp}°
+                  {temp(item.temp)}°
                 </span>
                 {item.precipitationProbability > 0 && (
                   <span className="flex items-center gap-0.5 text-[10px] text-blue-500 font-medium">

@@ -9,6 +9,7 @@ import type {
   ForecastDay,
   HourlyItem,
 } from '@/types/weather'
+import { useUnits } from '@/hooks/use-units'
 
 interface WeatherMainProps {
   current: CurrentWeather | null
@@ -31,6 +32,7 @@ export function WeatherMain({
   onRetry,
   onSync,
 }: WeatherMainProps) {
+  const { unitSystem, speedUnit, tempUnit, pressureUnit } = useUnits()
   return (
     <main className="relative z-0 flex-1 px-4 pb-8 md:px-8">
       <div className="max-w-2xl mx-auto flex flex-col gap-4">
@@ -60,7 +62,7 @@ export function WeatherMain({
         )}
         {current && (
           <p className="text-center text-xs text-muted-foreground pb-4">
-            Displaying metric measurements · km/h · °C · hPa
+            Displaying {unitSystem} measurements · {speedUnit} · {tempUnit} · {pressureUnit}
           </p>
         )}
       </div>
