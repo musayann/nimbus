@@ -22,6 +22,8 @@ export function CurrentWeatherCard({
     return <CurrentWeatherSkeleton />
   }
 
+  if (!weather) return null
+
   return (
     <div className="glass rounded-3xl p-6 md:p-8 relative overflow-hidden">
       {/* Subtle glow behind icon */}
