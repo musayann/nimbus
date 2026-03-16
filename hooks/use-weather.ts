@@ -154,7 +154,13 @@ export function useWeather() {
   }, [current, loadCity, loadDefault])
 
   const switchCity = useCallback(
-    (city: string, country: string, lat: number, lon: number, region?: string) => {
+    (
+      city: string,
+      country: string,
+      lat: number,
+      lon: number,
+      region?: string
+    ) => {
       setCurrent(null)
       setForecast([])
       setHourly([])
