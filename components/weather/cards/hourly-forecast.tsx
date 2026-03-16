@@ -10,7 +10,7 @@ interface HourlyForecastProps {
 }
 
 export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
-  if (isLoading) {
+  if (isLoading && (!data || data.length === 0)) {
     return (
       <div className="glass rounded-3xl p-6">
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-5">

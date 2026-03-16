@@ -10,7 +10,7 @@ interface ForecastCardProps {
 }
 
 export function ForecastCard({ forecast, isLoading }: ForecastCardProps) {
-  if (isLoading) {
+  if (isLoading && forecast.length === 0) {
     return (
       <div className="glass rounded-3xl p-6">
         <div className="h-5 w-32 rounded bg-white/10 mb-4 animate-pulse" />

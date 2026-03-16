@@ -14,7 +14,7 @@ export function WeatherLayout() {
     isLoading,
     error,
     isLocating,
-    loadCity,
+    switchCity,
     loadDefault,
     handleUseLocation,
     sync,
@@ -23,7 +23,7 @@ export function WeatherLayout() {
   return (
     <div className="flex flex-col">
       <WeatherHeader
-        onSearch={loadCity}
+        onSearch={switchCity}
         onUseLocation={handleUseLocation}
         isLocating={isLocating}
       />

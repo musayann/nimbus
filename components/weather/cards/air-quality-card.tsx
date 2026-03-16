@@ -48,7 +48,7 @@ export function AirQualityCard({
   data: airQuality,
   isLoading,
 }: AirQualityCardProps) {
-  if (isLoading) {
+  if (isLoading && !airQuality) {
     return (
       <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
         <div className="w-28 h-4 rounded bg-white/10" />

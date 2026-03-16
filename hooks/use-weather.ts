@@ -43,7 +43,6 @@ export function useWeather() {
     ) => {
       setIsLoading(true)
       setError(null)
-      setAirQuality(null)
       const weatherRes = await fetch(`/api/weather?lat=${lat}&lon=${lon}`)
       const result = weatherRes.ok ? await weatherRes.json() : null
       if (result) {
@@ -154,6 +153,17 @@ export function useWeather() {
     return () => window.removeEventListener('online', handleOnline)
   }, [current, loadCity, loadDefault])
 
+  const switchCity = useCallback(
+    (city: string, country: string, lat: number, lon: number, region?: string) => {
+      setCurrent(null)
+      setForecast([])
+      setHourly([])
+      setAirQuality(null)
+      loadCity(city, country, lat, lon, region)
+    },
+    [loadCity]
+  )
+
   const sync = useCallback(() => {
     if (current) {
       loadCity(
@@ -174,7 +184,7 @@ export function useWeather() {
     isLoading,
     error,
     isLocating,
-    loadCity,
+    switchCity,
     loadDefault,
     handleUseLocation,
     sync,

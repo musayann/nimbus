@@ -11,7 +11,7 @@ export function WeatherDetailsCard({
   weather,
   isLoading,
 }: WeatherDetailsCardProps) {
-  if (isLoading) {
+  if (isLoading && !weather) {
     return (
       <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
         <div className="w-40 h-5 rounded bg-white/10" />

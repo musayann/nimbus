@@ -17,7 +17,7 @@ export function CurrentWeatherCard({
   isLoading,
   onSync,
 }: CurrentWeatherCardProps) {
-  if (isLoading || !weather) {
+  if (!weather) {
     return (
       <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-70 animate-pulse">
         <div className="w-24 h-24 rounded-full bg-white/10" />
