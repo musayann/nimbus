@@ -25,10 +25,15 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
         '2026-03-11',
         '2026-03-12',
         '2026-03-13',
+        '2026-03-14',
+        '2026-03-15',
+        '2026-03-16',
+        '2026-03-17',
+        '2026-03-18',
       ],
-      weather_code: [0, 2, 3, 45, 63, 95],
-      temperature_2m_max: [24, 25, 22, 20, 18, 23],
-      temperature_2m_min: [15, 16, 14, 13, 12, 14],
+      weather_code: [0, 2, 3, 45, 63, 95, 0, 2, 3, 53, 81],
+      temperature_2m_max: [24, 25, 22, 20, 18, 23, 24, 21, 19, 22, 20],
+      temperature_2m_min: [15, 16, 14, 13, 12, 14, 15, 13, 11, 14, 12],
       sunrise: [
         '2026-03-08T06:15',
         '2026-03-09T06:16',
@@ -36,6 +41,11 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
         '2026-03-11T06:17',
         '2026-03-12T06:17',
         '2026-03-13T06:18',
+        '2026-03-14T06:18',
+        '2026-03-15T06:19',
+        '2026-03-16T06:19',
+        '2026-03-17T06:20',
+        '2026-03-18T06:20',
       ],
       sunset: [
         '2026-03-08T18:20',
@@ -44,12 +54,19 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
         '2026-03-11T18:18',
         '2026-03-12T18:18',
         '2026-03-13T18:17',
+        '2026-03-14T18:17',
+        '2026-03-15T18:16',
+        '2026-03-16T18:16',
+        '2026-03-17T18:15',
+        '2026-03-18T18:15',
       ],
-      uv_index_max: [8, 7, 5, 4, 3, 6],
-      precipitation_sum: [0, 1, 2, 5, 10, 0],
-      precipitation_probability_max: [10, 30, 50, 70, 90, 20],
-      wind_speed_10m_max: [15, 20, 18, 25, 30, 12],
-      relative_humidity_2m_max: [70, 75, 80, 85, 90, 65],
+      uv_index_max: [8, 7, 5, 4, 3, 6, 7, 5, 4, 6, 5],
+      precipitation_sum: [3, 1, 2, 5, 10, 0, 1, 3, 7, 2, 4],
+      precipitation_probability_max: [
+        10, 30, 50, 70, 90, 20, 15, 40, 60, 35, 55,
+      ],
+      wind_speed_10m_max: [15, 20, 18, 25, 30, 12, 14, 22, 28, 16, 20],
+      relative_humidity_2m_max: [70, 75, 80, 85, 90, 65, 72, 78, 88, 74, 82],
       ...((overrides.daily as object) ?? {}),
     },
     hourly: {
@@ -92,7 +109,7 @@ describe('fetchWeather', () => {
     expect(result.current.visibility).toBe(15)
     expect(result.current.uvIndex).toBe(6)
     expect(result.current.pressure).toBe(1013)
-    expect(result.current.precipitation).toBe(0.5)
+    expect(result.current.precipitation).toBe(3)
     expect(result.current.high).toBe(24)
     expect(result.current.low).toBe(15)
     expect(result.current.lastUpdated).toBeGreaterThan(0)
@@ -161,10 +178,10 @@ describe('fetchWeather', () => {
   })
 
   describe('forecast', () => {
-    it('returns 5 forecast days', async () => {
+    it('returns 10 forecast days', async () => {
       mockFetchOk(makeOpenMeteoResponse())
       const result = await fetchWeather(-1.9403, 29.8739)
-      expect(result.forecast).toHaveLength(5)
+      expect(result.forecast).toHaveLength(10)
     })
 
     it('labels first forecast day as "Tomorrow"', async () => {
