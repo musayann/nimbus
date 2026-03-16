@@ -11,13 +11,16 @@ export function AirQualitySkeleton() {
           <div className="w-12 h-7 rounded bg-white/10" />
         </div>
         <div className="h-2 rounded-full bg-white/10 my-1" />
-        <div className="flex items-center justify-between">
-          <div className="w-16 h-3 rounded bg-white/10" />
-          <div className="flex gap-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="w-12 h-3 rounded bg-white/10" />
-            ))}
+        <div className="flex flex-col gap-y-1">
+          <div className="md:flex items-center justify-between">
+            <div className="w-16 h-3 rounded bg-white/10" />
+            <div className="flex mt-4 md:mt-0 gap-3 justify-between">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="w-12 h-3 rounded bg-white/10" />
+              ))}
+            </div>
           </div>
+          <div className="w-24 h-2.5 rounded bg-white/10 ml-auto" />
         </div>
       </div>
     </div>

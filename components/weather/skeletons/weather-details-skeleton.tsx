@@ -14,6 +14,9 @@ export function WeatherDetailsSkeleton() {
             </div>
             <div className="w-14 h-5 rounded bg-white/10" />
             <div className="w-20 h-3 rounded bg-white/10" />
+            {i === 2 && (
+              <div className="h-1.5 rounded-full bg-white/10 mt-0.5" />
+            )}
           </div>
         ))}
       </div>

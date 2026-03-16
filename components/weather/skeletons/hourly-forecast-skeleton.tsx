@@ -15,6 +15,12 @@ export function HourlyForecastSkeleton() {
               <div className="h-5 w-5 bg-white/10 rounded-full" />
               <div className="h-14 w-1 bg-white/10 rounded-full" />
               <div className="h-3 w-8 bg-white/10 rounded" />
+              {i % 3 === 0 && (
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-white/10 rounded" />
+                  <div className="w-5 h-2.5 bg-white/10 rounded" />
+                </div>
+              )}
             </div>
           ))}
         </div>
