@@ -55,7 +55,7 @@ export async function fetchWeather(
     latitude: rounded.lat.toString(),
     longitude: rounded.lon.toString(),
     timezone: 'Africa/Kigali',
-    forecast_days: '6',
+    forecast_days: '11',
     current:
       'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,uv_index,dew_point_2m',
     hourly: 'temperature_2m,weather_code,precipitation_probability',
@@ -95,7 +95,7 @@ export async function fetchWeather(
     lastUpdated: Date.now(),
   }
 
-  // Forecast (days 1-5)
+  // Forecast (days 1-10)
   const forecast: ForecastDay[] = []
   const dateFmt = new Intl.DateTimeFormat('en-RW', {
     weekday: 'short',
@@ -104,7 +104,7 @@ export async function fetchWeather(
   })
   const dayFmt = new Intl.DateTimeFormat('en-RW', { weekday: 'short' })
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const d = new Date(data.daily.time[i])
     const wmo = mapWmoCode(data.daily.weather_code[i])
     forecast.push({
