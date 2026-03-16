@@ -3,6 +3,7 @@
 import { Droplets } from 'lucide-react'
 import type { HourlyItem } from '@/types/weather'
 import { WeatherIcon } from '../shared/weather-icon'
+import { HourlyForecastSkeleton } from '../skeletons/hourly-forecast-skeleton'
 
 interface HourlyForecastProps {
   data?: HourlyItem[]
@@ -11,30 +12,10 @@ interface HourlyForecastProps {
 
 export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
   if (isLoading && (!data || data.length === 0)) {
-    return (
-      <div className="glass rounded-3xl p-6">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-5">
-          Hourly Forecast
-        </h2>
-        <div className="flex gap-3">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center gap-2 w-14 animate-pulse"
-            >
-              <div className="h-3 w-10 bg-muted rounded" />
-              <div className="h-5 w-5 bg-muted rounded-full" />
-              <div className="h-14 w-1 bg-muted rounded-full" />
-              <div className="h-3 w-8 bg-muted rounded" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
+    return <HourlyForecastSkeleton />
   }
 
   if (!data || data.length === 0) return null
-
   const maxTemp = Math.max(...data.map((h) => h.temp))
   const minTemp = Math.min(...data.map((h) => h.temp))
   const range = maxTemp - minTemp || 1

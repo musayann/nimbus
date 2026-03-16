@@ -1,6 +1,7 @@
 import type { CurrentWeather } from '@/types/weather'
 import { Droplets, Thermometer, CloudRain, Gauge } from 'lucide-react'
 import { getDewPointLabel, getPressureLabel } from '@/lib/weather'
+import { WeatherDetailsSkeleton } from '../skeletons/weather-details-skeleton'
 
 interface WeatherDetailsCardProps {
   weather?: CurrentWeather | null
@@ -12,16 +13,7 @@ export function WeatherDetailsCard({
   isLoading,
 }: WeatherDetailsCardProps) {
   if (isLoading && !weather) {
-    return (
-      <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
-        <div className="w-40 h-5 rounded bg-white/10" />
-        <div className="grid grid-cols-2 gap-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-2xl bg-white/10" />
-          ))}
-        </div>
-      </div>
-    )
+    return <WeatherDetailsSkeleton />
   }
 
   if (!weather) return null

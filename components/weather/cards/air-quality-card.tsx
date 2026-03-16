@@ -1,6 +1,7 @@
 import { Wind } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AirQuality } from '@/types/weather'
+import { AirQualitySkeleton } from '../skeletons/air-quality-skeleton'
 
 interface AirQualityCardProps {
   data: AirQuality | null
@@ -49,12 +50,7 @@ export function AirQualityCard({
   isLoading,
 }: AirQualityCardProps) {
   if (isLoading && !airQuality) {
-    return (
-      <div className="glass rounded-3xl p-6 animate-pulse space-y-4">
-        <div className="w-28 h-4 rounded bg-white/10" />
-        <div className="h-20 rounded-2xl bg-white/10" />
-      </div>
-    )
+    return <AirQualitySkeleton />
   }
 
   if (!airQuality) return null

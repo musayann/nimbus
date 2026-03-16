@@ -5,6 +5,7 @@ import type { CurrentWeather } from '@/types/weather'
 import { MapPin, Sunrise, Sunset, Gauge } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SyncButton } from '../shared/sync-button'
+import { CurrentWeatherSkeleton } from '../skeletons/current-weather-skeleton'
 
 interface CurrentWeatherCardProps {
   weather?: CurrentWeather | null
@@ -17,14 +18,8 @@ export function CurrentWeatherCard({
   isLoading,
   onSync,
 }: CurrentWeatherCardProps) {
-  if (!weather) {
-    return (
-      <div className="glass rounded-3xl p-8 flex flex-col items-center justify-center gap-4 min-h-70 animate-pulse">
-        <div className="w-24 h-24 rounded-full bg-white/10" />
-        <div className="w-32 h-12 rounded-xl bg-white/10" />
-        <div className="w-48 h-4 rounded bg-white/10" />
-      </div>
-    )
+  if (isLoading && !weather) {
+    return <CurrentWeatherSkeleton />
   }
 
   return (
