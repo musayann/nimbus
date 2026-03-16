@@ -2,6 +2,7 @@
 
 import { Droplets } from 'lucide-react'
 import type { HourlyItem } from '@/types/weather'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { WeatherIcon } from '../shared/weather-icon'
 import { HourlyForecastSkeleton } from '../skeletons/hourly-forecast-skeleton'
 
@@ -25,8 +26,8 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-5">
         Hourly Forecast
       </h2>
-      <div className="overflow-x-auto pb-2 -mx-2 px-2">
-        <div className="flex gap-3 min-w-max">
+      <ScrollArea className="-mx-2 px-2">
+        <div className="flex gap-3 min-w-max pb-3">
           {data.map((item, i) => {
             const barHeight =
               Math.round(((item.temp - minTemp) / range) * 40) + 12
@@ -56,7 +57,8 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
             )
           })}
         </div>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   )
 }
