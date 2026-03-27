@@ -7,6 +7,8 @@ export type WeatherCondition =
   | 'foggy'
   | 'windy'
   | 'snow'
+  | 'night-clear'
+  | 'night-cloudy'
 
 export type AirQualityLevel =
   | 'Good'

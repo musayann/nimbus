@@ -6,13 +6,22 @@ import type {
 } from '@/types/weather'
 import { roundCoordinates } from '@/lib/geo'
 
-function mapWmoCode(code: number): {
+function mapWmoCode(
+  code: number,
+  isNight: boolean = false
+): {
   condition: WeatherCondition
   description: string
 } {
-  if (code === 0) return { condition: 'sunny', description: 'Clear sky' }
+  if (code === 0) {
+    return isNight
+      ? { condition: 'night-clear', description: 'Clear night' }
+      : { condition: 'sunny', description: 'Clear sky' }
+  }
   if (code <= 2)
-    return { condition: 'partly-cloudy', description: 'Partly cloudy' }
+    return isNight
+      ? { condition: 'night-cloudy', description: 'Partly cloudy night' }
+      : { condition: 'partly-cloudy', description: 'Partly cloudy' }
   if (code === 3) return { condition: 'cloudy', description: 'Overcast' }
   if (code >= 45 && code <= 48)
     return { condition: 'foggy', description: 'Foggy' }
@@ -70,10 +79,18 @@ export async function fetchWeather(
 
   const data = await res.json()
 
+  // Helper to determine if current time is night
+  const isNight = (sunrise: string, sunset: string): boolean => {
+    const now = new Date()
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+    return currentTime < sunrise || currentTime >= sunset
+  }
+
   // Current weather
-  const { condition, description } = mapWmoCode(data.current.weather_code)
   const sunriseTime = parseTimeHHMM(data.daily.sunrise?.[0])
   const sunsetTime = parseTimeHHMM(data.daily.sunset?.[0])
+  const currentIsNight = isNight(sunriseTime, sunsetTime)
+  const { condition, description } = mapWmoCode(data.current.weather_code, currentIsNight)
 
   const current: Omit<CurrentWeather, 'city' | 'country' | 'coordinates'> = {
     temperature: Math.round(data.current.temperature_2m),
@@ -106,7 +123,8 @@ export async function fetchWeather(
 
   for (let i = 1; i <= 10; i++) {
     const d = new Date(data.daily.time[i])
-    const wmo = mapWmoCode(data.daily.weather_code[i])
+    // For daily forecast, show night conditions for simplicity
+    const wmo = mapWmoCode(data.daily.weather_code[i], false)
     forecast.push({
       date: i === 1 ? 'Tomorrow' : dateFmt.format(d),
       dayName: dayFmt.format(d),
@@ -132,10 +150,11 @@ export async function fetchWeather(
     if (idx >= data.hourly.time.length) break
     const time = data.hourly.time[idx]
     const hour = i === 0 ? 'Now' : time.split('T')[1].slice(0, 5)
+    const hourIsNight = isNight(sunriseTime, hour)
     hourly.push({
       hour,
       temp: Math.round(data.hourly.temperature_2m[idx]),
-      condition: mapWmoCode(data.hourly.weather_code[idx]).condition,
+      condition: mapWmoCode(data.hourly.weather_code[idx], hourIsNight).condition,
       precipitationProbability: data.hourly.precipitation_probability[idx] ?? 0,
     })
   }

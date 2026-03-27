@@ -297,6 +297,41 @@ export function WeatherIcon({
     )
   }
 
+  if (condition === 'night-clear') {
+    return (
+      <svg
+        width={s}
+        height={s}
+        viewBox="0 0 64 64"
+        fill="none"
+        className={`${animClass} ${className}`}
+        aria-label="Clear night"
+      >
+        <circle cx="32" cy="32" r="14" fill="#FEF3C7" />
+        <circle cx="38" cy="28" r="14" fill="#1a1a2e" />
+      </svg>
+    )
+  }
+
+  if (condition === 'night-cloudy') {
+    return (
+      <svg
+        width={s}
+        height={s}
+        viewBox="0 0 64 64"
+        fill="none"
+        className={`${animClass} ${className}`}
+        aria-label="Cloudy night"
+      >
+        <circle cx="28" cy="18" r="12" fill="#FEF3C7" />
+        <circle cx="34" cy="14" r="12" fill="#1a1a2e" />
+        <ellipse cx="34" cy="40" rx="14" ry="8" fill="#94A3B8" />
+        <ellipse cx="24" cy="42" rx="10" ry="7" fill="#94A3B8" />
+        <ellipse cx="44" cy="42" rx="10" ry="8" fill="#94A3B8" />
+      </svg>
+    )
+  }
+
   console.warn(`WeatherIcon: unmatched condition "${condition}"`)
   return (
     <CloudOff size={s} className={className} aria-label="Unknown weather" />
