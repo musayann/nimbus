@@ -307,8 +307,7 @@ export function WeatherIcon({
         className={`${animClass} ${className}`}
         aria-label="Clear night"
       >
-        <circle cx="38" cy="28" r="16" fill="#E0E7FF" />
-        <circle cx="48" cy="18" r="12" fill="#1a1a2e" />
+        <circle cx="32" cy="32" r="14" fill="#E0E7FF" />
       </svg>
     )
   }
@@ -323,25 +322,10 @@ export function WeatherIcon({
         className={`${animClass} ${className}`}
         aria-label="Cloudy night"
       >
-        <circle cx="42" cy="18" r="14" fill="#E0E7FF" />
-        <circle cx="54" cy="10" r="10" fill="#1a1a2e" />
-        <ellipse
-          cx="34"
-          cy="40"
-          rx="14"
-          ry="8"
-          fill="#94A3B8"
-          fillOpacity="0.85"
-        />
-        <ellipse
-          cx="24"
-          cy="42"
-          rx="10"
-          ry="7"
-          fill="#94A3B8"
-          fillOpacity="0.8"
-        />
-        <ellipse cx="44" cy="42" rx="10" ry="8" fill="#94A3B8" fillOpacity="0.75" />
+        <circle cx="28" cy="20" r="12" fill="#E0E7FF" />
+        <ellipse cx="34" cy="40" rx="14" ry="8" fill="#94A3B8" />
+        <ellipse cx="24" cy="42" rx="10" ry="7" fill="#94A3B8" />
+        <ellipse cx="44" cy="42" rx="10" ry="8" fill="#94A3B8" />
       </svg>
     )
   }
