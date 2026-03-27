@@ -15,6 +15,7 @@ function makeOpenMeteoResponse(overrides: Record<string, unknown> = {}) {
       visibility: 15000,
       uv_index: 6,
       dew_point_2m: 14.8,
+      is_day: 1,
       ...((overrides.current as object) ?? {}),
     },
     daily: {
@@ -229,6 +230,48 @@ describe('fetchWeather', () => {
     const url = fetchCall[0] as string
     expect(url).toContain('latitude=-1.95')
     expect(url).toContain('longitude=29.88')
+  })
+
+  describe('isDay', () => {
+    it('sets isDay true for current weather when is_day=1', async () => {
+      mockFetchOk(makeOpenMeteoResponse())
+      const result = await fetchWeather(-1.9403, 29.8739)
+      expect(result.current.isDay).toBe(true)
+    })
+
+    it('sets isDay false for current weather when is_day=0', async () => {
+      mockFetchOk(makeOpenMeteoResponse({ current: { is_day: 0 } }))
+      const result = await fetchWeather(-1.9403, 29.8739)
+      expect(result.current.isDay).toBe(false)
+    })
+
+    it('marks hourly items before sunrise as nighttime', async () => {
+      // current time is 14:30, sunrise at 06:15
+      // Force current hour to 04:00 so we get pre-sunrise hours
+      mockFetchOk(
+        makeOpenMeteoResponse({ current: { time: '2026-03-08T04:00' } })
+      )
+      const result = await fetchWeather(-1.9403, 29.8739)
+      // First hour is 04:00 which is before sunrise 06:15
+      expect(result.hourly[0].isDay).toBe(false)
+    })
+
+    it('marks hourly items between sunrise and sunset as daytime', async () => {
+      mockFetchOk(makeOpenMeteoResponse())
+      const result = await fetchWeather(-1.9403, 29.8739)
+      // current time is 14:30 — hour 14:00 is between 06:15 and 18:20
+      expect(result.hourly[0].isDay).toBe(true)
+    })
+
+    it('marks hourly items after sunset as nighttime', async () => {
+      // current time 20:00, sunset at 18:20
+      mockFetchOk(
+        makeOpenMeteoResponse({ current: { time: '2026-03-08T20:00' } })
+      )
+      const result = await fetchWeather(-1.9403, 29.8739)
+      // First hour is 20:00 which is after sunset 18:20
+      expect(result.hourly[0].isDay).toBe(false)
+    })
   })
 
   it('throws on non-ok upstream response', async () => {

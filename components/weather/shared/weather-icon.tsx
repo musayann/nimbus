@@ -8,6 +8,7 @@ interface WeatherIconProps {
   size?: number
   animated?: boolean
   className?: string
+  isDay?: boolean
 }
 
 export function WeatherIcon({
@@ -15,11 +16,40 @@ export function WeatherIcon({
   size = 64,
   animated = false,
   className = '',
+  isDay = true,
 }: WeatherIconProps) {
   const s = size
   const animClass = animated ? 'weather-icon-animated' : ''
 
   if (condition === 'sunny') {
+    if (!isDay) {
+      return (
+        <svg
+          width={s}
+          height={s}
+          viewBox="0 0 64 64"
+          fill="none"
+          className={`${animClass} ${className}`}
+          aria-label="Clear night"
+        >
+          <mask id="crescent-clear">
+            <rect width="64" height="64" fill="white" />
+            <circle cx="38" cy="26" r="12" fill="black" />
+          </mask>
+          <circle
+            cx="30"
+            cy="32"
+            r="14"
+            fill="#E8E4D9"
+            mask="url(#crescent-clear)"
+          />
+          <circle cx="48" cy="16" r="1.5" fill="white" fillOpacity="0.8" />
+          <circle cx="18" cy="18" r="1.2" fill="white" fillOpacity="0.6" />
+          <circle cx="50" cy="38" r="1" fill="white" fillOpacity="0.7" />
+          <circle cx="14" cy="42" r="1.3" fill="white" fillOpacity="0.65" />
+        </svg>
+      )
+    }
     return (
       <svg
         width={s}
@@ -47,6 +77,56 @@ export function WeatherIcon({
   }
 
   if (condition === 'partly-cloudy') {
+    if (!isDay) {
+      return (
+        <svg
+          width={s}
+          height={s}
+          viewBox="0 0 64 64"
+          fill="none"
+          className={`${animClass} ${className}`}
+          aria-label="Partly cloudy night"
+        >
+          <mask id="crescent-cloudy">
+            <rect width="64" height="64" fill="white" />
+            <circle cx="30" cy="16" r="8" fill="black" />
+          </mask>
+          <circle
+            cx="24"
+            cy="22"
+            r="10"
+            fill="#E8E4D9"
+            mask="url(#crescent-cloudy)"
+          />
+          <circle cx="42" cy="14" r="1.2" fill="white" fillOpacity="0.7" />
+          <circle cx="14" cy="12" r="1" fill="white" fillOpacity="0.6" />
+          <ellipse
+            cx="34"
+            cy="40"
+            rx="14"
+            ry="8"
+            fill="white"
+            fillOpacity="0.9"
+          />
+          <ellipse
+            cx="26"
+            cy="40"
+            rx="10"
+            ry="7"
+            fill="white"
+            fillOpacity="0.85"
+          />
+          <ellipse
+            cx="42"
+            cy="40"
+            rx="8"
+            ry="6"
+            fill="white"
+            fillOpacity="0.8"
+          />
+        </svg>
+      )
+    }
     return (
       <svg
         width={s}

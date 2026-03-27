@@ -96,6 +96,7 @@ export function CurrentWeatherCard({
             condition={weather.condition}
             size={96}
             animated
+            isDay={weather.isDay}
             className="flex-shrink-0 drop-shadow-lg"
           />
         </div>

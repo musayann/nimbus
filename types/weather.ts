@@ -52,6 +52,7 @@ export interface CurrentWeather {
   high: number
   low: number
   lastUpdated: number
+  isDay: boolean
 }
 
 export interface HourlyItem {
@@ -59,6 +60,7 @@ export interface HourlyItem {
   temp: number
   condition: WeatherCondition
   precipitationProbability: number // %
+  isDay: boolean
 }
 
 export interface ForecastDay {

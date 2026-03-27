@@ -57,7 +57,7 @@ export async function fetchWeather(
     timezone: 'Africa/Kigali',
     forecast_days: '11',
     current:
-      'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,uv_index,dew_point_2m',
+      'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,pressure_msl,visibility,uv_index,dew_point_2m,is_day',
     hourly: 'temperature_2m,weather_code,precipitation_probability',
     daily:
       'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,relative_humidity_2m_max',
@@ -93,6 +93,7 @@ export async function fetchWeather(
     high: Math.round(data.daily.temperature_2m_max[0]),
     low: Math.round(data.daily.temperature_2m_min[0]),
     lastUpdated: Date.now(),
+    isDay: Boolean(data.current.is_day),
   }
 
   // Forecast (days 1-10)
@@ -120,6 +121,15 @@ export async function fetchWeather(
     })
   }
 
+  // Build sunrise/sunset lookup by date for hourly isDay computation
+  const sunTimesByDate = new Map<string, { sunrise: string; sunset: string }>()
+  for (let i = 0; i < data.daily.time.length; i++) {
+    sunTimesByDate.set(data.daily.time[i], {
+      sunrise: data.daily.sunrise[i],
+      sunset: data.daily.sunset[i],
+    })
+  }
+
   // Hourly (next 12 hours from current hour)
   const currentHour = data.current.time.slice(0, 13) + ':00'
   const currentHourIndex = data.hourly.time.findIndex(
@@ -132,11 +142,17 @@ export async function fetchWeather(
     if (idx >= data.hourly.time.length) break
     const time = data.hourly.time[idx]
     const hour = i === 0 ? 'Now' : time.split('T')[1].slice(0, 5)
+    const dayDate = time.slice(0, 10)
+    const sunTimes = sunTimesByDate.get(dayDate)
+    const isHourDay = sunTimes
+      ? time >= sunTimes.sunrise && time < sunTimes.sunset
+      : true
     hourly.push({
       hour,
       temp: Math.round(data.hourly.temperature_2m[idx]),
       condition: mapWmoCode(data.hourly.weather_code[idx]).condition,
       precipitationProbability: data.hourly.precipitation_probability[idx] ?? 0,
+      isDay: isHourDay,
     })
   }
 

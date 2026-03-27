@@ -99,7 +99,7 @@ export function HourlyForecast({ data, isLoading }: HourlyForecastProps) {
                   <span className="text-xs text-muted-foreground font-medium">
                     {item.hour}
                   </span>
-                  <WeatherIcon condition={item.condition} size={24} />
+                  <WeatherIcon condition={item.condition} size={24} isDay={item.isDay} />
                   <div className="flex flex-col items-center justify-end h-14">
                     <div
                       className="w-1 rounded-full bg-primary opacity-70"
