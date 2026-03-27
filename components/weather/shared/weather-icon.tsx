@@ -297,6 +297,67 @@ export function WeatherIcon({
     )
   }
 
+  if (condition === 'night-clear') {
+    return (
+      <svg
+        width={s}
+        height={s}
+        viewBox="0 0 64 64"
+        fill="none"
+        className={`${animClass} ${className}`}
+        aria-label="Clear night"
+      >
+        <circle cx="32" cy="28" r="18" fill="#C7D2E8" />
+        <circle cx="42" cy="18" r="8" fill="#1a1a2e" />
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+          <line
+            key={i}
+            x1="32"
+            y1="28"
+            x2={32 + Math.cos((angle * Math.PI) / 180) * 30}
+            y2={28 + Math.sin((angle * Math.PI) / 180) * 30}
+            stroke="#C7D2E8"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeOpacity="0.5"
+          />
+        ))}
+      </svg>
+    )
+  }
+
+  if (condition === 'night-cloudy') {
+    return (
+      <svg
+        width={s}
+        height={s}
+        viewBox="0 0 64 64"
+        fill="none"
+        className={`${animClass} ${className}`}
+        aria-label="Cloudy night"
+      >
+        <circle cx="40" cy="18" r="8" fill="#1a1a2e" />
+        <ellipse
+          cx="34"
+          cy="40"
+          rx="14"
+          ry="8"
+          fill="#8B96C8"
+          fillOpacity="0.85"
+        />
+        <ellipse
+          cx="26"
+          cy="42"
+          rx="10"
+          ry="7"
+          fill="#8B96C8"
+          fillOpacity="0.8"
+        />
+        <ellipse cx="42" cy="42" rx="8" ry="6" fill="#8B96C8" fillOpacity="0.75" />
+      </svg>
+    )
+  }
+
   console.warn(`WeatherIcon: unmatched condition "${condition}"`)
   return (
     <CloudOff size={s} className={className} aria-label="Unknown weather" />
