@@ -307,21 +307,8 @@ export function WeatherIcon({
         className={`${animClass} ${className}`}
         aria-label="Clear night"
       >
-        <circle cx="32" cy="28" r="18" fill="#C7D2E8" />
-        <circle cx="42" cy="18" r="8" fill="#1a1a2e" />
-        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
-          <line
-            key={i}
-            x1="32"
-            y1="28"
-            x2={32 + Math.cos((angle * Math.PI) / 180) * 30}
-            y2={28 + Math.sin((angle * Math.PI) / 180) * 30}
-            stroke="#C7D2E8"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeOpacity="0.5"
-          />
-        ))}
+        <circle cx="38" cy="28" r="16" fill="#E0E7FF" />
+        <circle cx="48" cy="18" r="12" fill="#1a1a2e" />
       </svg>
     )
   }
@@ -336,24 +323,25 @@ export function WeatherIcon({
         className={`${animClass} ${className}`}
         aria-label="Cloudy night"
       >
-        <circle cx="40" cy="18" r="8" fill="#1a1a2e" />
+        <circle cx="42" cy="18" r="14" fill="#E0E7FF" />
+        <circle cx="54" cy="10" r="10" fill="#1a1a2e" />
         <ellipse
           cx="34"
           cy="40"
           rx="14"
           ry="8"
-          fill="#8B96C8"
+          fill="#94A3B8"
           fillOpacity="0.85"
         />
         <ellipse
-          cx="26"
+          cx="24"
           cy="42"
           rx="10"
           ry="7"
-          fill="#8B96C8"
+          fill="#94A3B8"
           fillOpacity="0.8"
         />
-        <ellipse cx="42" cy="42" rx="8" ry="6" fill="#8B96C8" fillOpacity="0.75" />
+        <ellipse cx="44" cy="42" rx="10" ry="8" fill="#94A3B8" fillOpacity="0.75" />
       </svg>
     )
   }
